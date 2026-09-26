@@ -1,0 +1,9 @@
+node_modules/
+dist/
+_dist_clean.zip
+_dist_only.zip
+_deploy.zip
+*.zip
+.env
+.env.local
+.env.*.local
