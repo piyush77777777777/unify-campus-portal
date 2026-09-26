@@ -235,7 +235,7 @@ netlify deploy --prod --dir=dist
 | **Team Name** | BUG FINDERS |
 | **Hackathon** | BPUT Tech Hackathon 2026 |
 | **Problem Statement** | PS-07 — Smart Campus Management |
-| **Developer** | Piyush Mohapatra (Reg: 2201106145) |
+| **Developer** | Piyush Kumar Dey (Reg: 260310533838) |
 
 ---
 
