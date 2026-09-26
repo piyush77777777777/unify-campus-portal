@@ -1,248 +1,301 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { ShieldCheck, Bell, FileText, Wrench, MapPin, CheckCircle2, ArrowRight, Sparkles, Zap, Users, Star } from 'lucide-react';
+import GoogleAuthModal from '../auth/GoogleAuthModal';
 import { useCampus } from '../../context/CampusContext';
-import {
-  GraduationCap, Building2, Shield, Utensils, BookOpen,
-  Users, ShieldCheck, Bell, FileText, Wrench, MapPin, CheckCircle2
-} from 'lucide-react';
 
 const PORTALS = [
-  {
-    id: 'student',
-    label: 'Student',
-    icon: GraduationCap,
-    description: 'Attendance, Gate Pass, Mess, Documents & Notices',
-    color: 'bg-blue-600',
-    ring: 'ring-blue-500',
-    gradient: 'from-blue-600 to-indigo-600',
-    lightBg: 'bg-blue-50 border-blue-200 text-blue-700'
-  },
-  {
-    id: 'teacher',
-    label: 'Faculty',
-    icon: BookOpen,
-    description: 'Class Schedule, Attendance Review & Leave Requests',
-    color: 'bg-purple-600',
-    ring: 'ring-purple-500',
-    gradient: 'from-purple-600 to-indigo-600',
-    lightBg: 'bg-purple-50 border-purple-200 text-purple-700'
-  },
-  {
-    id: 'warden',
-    label: 'Hostel Warden',
-    icon: Building2,
-    description: 'Gate Pass Approvals, Complaints & Hostel Management',
-    color: 'bg-indigo-600',
-    ring: 'ring-indigo-500',
-    gradient: 'from-indigo-600 to-slate-700',
-    lightBg: 'bg-indigo-50 border-indigo-200 text-indigo-700'
-  },
-  {
-    id: 'guard',
-    label: 'Security Officer',
-    icon: Shield,
-    description: 'QR Gate Scanner, Entry/Exit Log & Alerts',
-    color: 'bg-amber-600',
-    ring: 'ring-amber-500',
-    gradient: 'from-amber-600 to-orange-600',
-    lightBg: 'bg-amber-50 border-amber-200 text-amber-700'
-  },
-  {
-    id: 'messManager',
-    label: 'Mess Supervisor',
-    icon: Utensils,
-    description: 'Menu Management, Meal Poll & Feedback Dashboard',
-    color: 'bg-emerald-600',
-    ring: 'ring-emerald-500',
-    gradient: 'from-emerald-600 to-teal-600',
-    lightBg: 'bg-emerald-50 border-emerald-200 text-emerald-700'
-  },
-  {
-    id: 'parent',
-    label: 'Parent / Guardian',
-    icon: Users,
-    description: "Ward's Attendance, Gate Pass History & Fee Status",
-    color: 'bg-teal-600',
-    ring: 'ring-teal-500',
-    gradient: 'from-teal-600 to-cyan-600',
-    lightBg: 'bg-teal-50 border-teal-200 text-teal-700'
-  },
-  {
-    id: 'principal',
-    label: 'Principal & Director',
-    icon: Building2,
-    description: 'Campus KPIs, Department Overview & Escalation Queue',
-    color: 'bg-rose-700',
-    ring: 'ring-rose-600',
-    gradient: 'from-rose-700 to-slate-800',
-    lightBg: 'bg-rose-50 border-rose-200 text-rose-700'
-  }
+  { id:'student',     emoji:'🎓', label:'Student',     desc:'Attendance, gate pass, fees, mess, hostel & more', gradient:'from-blue-500 to-indigo-600',    glow:'shadow-blue-500/30',   ring:'ring-blue-400' },
+  { id:'teacher',     emoji:'📚', label:'Teacher',     desc:'Classes, leave, grading, polls & workload',        gradient:'from-violet-500 to-purple-600',   glow:'shadow-violet-500/30', ring:'ring-violet-400' },
+  { id:'warden',      emoji:'🏠', label:'Warden',      desc:'Hostel gate passes, complaints & room records',    gradient:'from-emerald-500 to-teal-600',    glow:'shadow-emerald-500/30',ring:'ring-emerald-400' },
+  { id:'guard',       emoji:'🛡️', label:'Security',    desc:'QR scan, visitor logs & campus security audit',    gradient:'from-slate-600 to-slate-800',     glow:'shadow-slate-500/30',  ring:'ring-slate-400' },
+  { id:'messManager', emoji:'🍽️', label:'Mess',        desc:'Menu, feedback, reservations & nutrition',         gradient:'from-orange-500 to-amber-500',    glow:'shadow-orange-500/30', ring:'ring-orange-400' },
+  { id:'parent',      emoji:'👨‍👩‍👧', label:'Parent',     desc:'Ward attendance, fee status & gate pass history',  gradient:'from-teal-500 to-cyan-500',       glow:'shadow-teal-500/30',   ring:'ring-teal-400' },
+  { id:'principal',   emoji:'🎯', label:'Principal',   desc:'Campus analytics, staffing AI & policy compliance',gradient:'from-rose-500 to-pink-600',       glow:'shadow-rose-500/30',   ring:'ring-rose-400' },
 ];
 
-export default function LandingPage() {
-  const { setAuthModalOpen, setAuthTargetRole } = useCampus();
-  const [hoveredPortal, setHoveredPortal] = useState(null);
+const FEATURES = [
+  { icon:'⚡', text:'Real-time QR Gate Pass' },
+  { icon:'📍', text:'Live GPS Bus Tracker' },
+  { icon:'🤖', text:'AI Complaint Routing' },
+  { icon:'🔔', text:'Smart Push Notifications' },
+  { icon:'📊', text:'Campus Analytics Dashboard' },
+  { icon:'🚨', text:'Emergency SOS System' },
+  { icon:'🗳️', text:'Live Polls & Quizzes' },
+  { icon:'🗺️', text:'Campus Hotspot Map' },
+];
 
-  const handleSignIn = (portalId) => {
-    setAuthTargetRole(portalId);
-    setAuthModalOpen(true);
+// ── Unique animated UNIFY Logo ───────────────────────────────────
+function UnifyLogo({ size = 'md' }) {
+  const s = size === 'lg' ? { wrap: 'w-14 h-14', dots: 'w-5 h-5', text: 'text-2xl', sub: 'text-xs' }
+           : size === 'sm' ? { wrap: 'w-7 h-7', dots: 'w-2.5 h-2.5', text: 'text-base', sub: 'hidden' }
+           : { wrap: 'w-10 h-10', dots: 'w-3.5 h-3.5', text: 'text-xl', sub: 'text-[10px]' };
+  return (
+    <div className="flex items-center gap-2.5">
+      {/* Hexagonal orbit logo */}
+      <div className={`relative ${s.wrap} flex-shrink-0`}>
+        <svg viewBox="0 0 56 56" className="w-full h-full drop-shadow-lg">
+          {/* Outer hex */}
+          <polygon points="28,2 52,15 52,41 28,54 4,41 4,15"
+            fill="none" stroke="url(#logoGrad)" strokeWidth="2.5" strokeLinejoin="round"/>
+          {/* Inner hex */}
+          <polygon points="28,12 44,21 44,35 28,44 12,35 12,21"
+            fill="url(#logoGrad)" opacity="0.15"/>
+          {/* Center U shape */}
+          <text x="28" y="35" textAnchor="middle" fontSize="20" fontWeight="900"
+            fill="url(#logoGrad)" fontFamily="system-ui,sans-serif">U</text>
+          {/* Orbit dot */}
+          <circle cx="28" cy="4" r="3" fill="#3b82f6">
+            <animateTransform attributeName="transform" type="rotate"
+              from="0 28 28" to="360 28 28" dur="4s" repeatCount="indefinite"/>
+          </circle>
+          <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#3b82f6"/>
+              <stop offset="50%" stopColor="#8b5cf6"/>
+              <stop offset="100%" stopColor="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div>
+        <div className={`font-black tracking-tight ${s.text} bg-gradient-to-r from-blue-600 via-violet-600 to-cyan-500 bg-clip-text text-transparent`}>
+          UNIFY
+        </div>
+        <div className={`font-bold text-slate-400 uppercase tracking-widest ${s.sub}`}>Smart Campus</div>
+      </div>
+    </div>
+  );
+}
+
+// ── Floating particle background ────────────────────────────────
+function Particles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <div key={i}
+          className="absolute rounded-full opacity-20 animate-float"
+          style={{
+            width: `${4 + (i % 5) * 6}px`,
+            height: `${4 + (i % 5) * 6}px`,
+            left: `${5 + (i * 47) % 90}%`,
+            top: `${5 + (i * 37) % 85}%`,
+            background: ['#3b82f6','#8b5cf6','#06b6d4','#10b981','#f59e0b'][i % 5],
+            animationDelay: `${(i * 0.4) % 4}s`,
+            animationDuration: `${5 + (i % 4)}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+export default function LandingPage() {
+  const { setIsLandingPage, loginWithGoogle } = useCampus();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [hoveredPortal, setHoveredPortal] = useState(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => { setTimeout(() => setVisible(true), 100); }, []);
+
+  const handlePortalClick = (portalId) => {
+    setSelectedRole(portalId);
+    setModalOpen(true);
+  };
+
+  const handleLogin = (role, user) => {
+    loginWithGoogle(role, user);
+    setIsLandingPage(false);
+    setModalOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="min-h-screen bg-[#030712] text-white overflow-x-hidden">
 
-      {/* ── Top Navbar ───────────────────────────────────── */}
-      <nav className="bg-white border-b border-slate-200 px-4 sm:px-8 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+      {/* ── CSS animations ── */}
+      <style>{`
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-fade-up { animation: fadeUp 0.7s ease forwards; }
+        .shimmer-text {
+          background: linear-gradient(90deg,#3b82f6,#8b5cf6,#06b6d4,#3b82f6);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: shimmer 3s linear infinite;
+        }
+        .card-glow { transition: all 0.3s; }
+        .card-glow:hover { transform: translateY(-6px) scale(1.02); }
+        .grid-bg {
+          background-image: linear-gradient(rgba(59,130,246,0.05) 1px,transparent 1px),
+                            linear-gradient(90deg,rgba(59,130,246,0.05) 1px,transparent 1px);
+          background-size: 50px 50px;
+        }
+      `}</style>
+
+      {/* ── NAV ── */}
+      <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 sm:px-8 py-3.5 border-b border-white/5 backdrop-blur-xl bg-[#030712]/80 transition-all duration-700 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+        <UnifyLogo size="md" />
         <div className="flex items-center gap-3">
-          <div className="grid grid-cols-2 gap-0.5 w-8 h-8 p-1 bg-slate-900 rounded-xl">
-            <div className="bg-blue-400 rounded-sm" />
-            <div className="bg-amber-400 rounded-sm" />
-            <div className="bg-emerald-400 rounded-sm" />
-            <div className="bg-cyan-400 rounded-sm" />
-          </div>
-          <div>
-            <span className="font-black text-lg text-slate-900 tracking-tight">UNIFY</span>
-            <span className="ml-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Smart Campus Portal</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500">
-          <ShieldCheck className="w-4 h-4 text-emerald-500" />
-          <span className="hidden sm:inline font-semibold">Secured by Google OAuth 2.0</span>
+          <span className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-400 font-bold">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"/>LIVE
+          </span>
+          <button onClick={() => setModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 text-xs font-black shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105 transition-all">
+            Sign In <ArrowRight className="w-3.5 h-3.5"/>
+          </button>
         </div>
       </nav>
 
-      {/* ── Hero Section ─────────────────────────────────── */}
-      <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-8 py-16 sm:py-24 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-bold mb-6">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block" />
-            Smart Campus Management System
+      {/* ── HERO ── */}
+      <div className="relative min-h-screen flex items-center justify-center grid-bg pt-16">
+        <Particles/>
+
+        {/* Glow blobs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[128px] pointer-events-none"/>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-violet-600/20 rounded-full blur-[128px] pointer-events-none"/>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/10 rounded-full blur-[96px] pointer-events-none"/>
+
+        <div className={`relative z-10 text-center px-4 max-w-4xl mx-auto transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-bold mb-8 backdrop-blur-sm">
+            <Sparkles className="w-3.5 h-3.5 text-blue-400"/>
+            AI-Powered Smart Campus System
+            <span className="ml-1 px-2 py-0.5 rounded-full bg-blue-500/30 text-[10px] font-black">NEW</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black leading-tight tracking-tight mb-4">
-            One Platform.<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
-              Every Campus Role.
-            </span>
+
+          {/* Hero heading */}
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-none tracking-tight mb-6">
+            <span className="block text-white">Campus life,</span>
+            <span className="block shimmer-text mt-1">unified.</span>
           </h1>
-          <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            Unified digital portal for Students, Faculty, Wardens, Security, Mess Staff, Parents and Administration — all in one place, secured with Google.
+
+          <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-10">
+            One intelligent portal for every role — Students, Faculty, Wardens, Security, Parents & Administration. AI-powered, real-time, and offline-ready.
           </p>
 
           {/* Feature pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
-            {[
-              { icon: ShieldCheck, text: 'Digital Gate Pass' },
-              { icon: Bell, text: 'Smart Notifications' },
-              { icon: FileText, text: 'Instant Documents' },
-              { icon: Wrench, text: 'Complaint Tracker' },
-              { icon: MapPin, text: 'Live Bus Tracker' },
-              { icon: CheckCircle2, text: 'Attendance System' }
-            ].map(({ icon: Icon, text }, i) => (
-              <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-white/90">
-                <Icon className="w-3.5 h-3.5 text-blue-300" />
-                {text}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+            {FEATURES.map((f, i) => (
+              <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-white/80 hover:bg-white/10 transition-all cursor-default">
+                <span>{f.icon}</span>{f.text}
               </span>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button onClick={() => setModalOpen(true)}
+              className="group flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-600 via-violet-600 to-cyan-600 text-white font-black text-sm shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-all">
+              <Zap className="w-4 h-4"/>
+              Get Started — It's Free
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform"/>
+            </button>
+            <div className="flex items-center gap-2 text-xs text-slate-500">
+              <ShieldCheck className="w-4 h-4 text-emerald-500"/>
+              <span>Secured with Google OAuth 2.0</span>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="flex items-center justify-center gap-8 mt-12 pt-8 border-t border-white/5">
+            {[{ v:'7', l:'Portals' }, { v:'60+', l:'Features' }, { v:'AI', l:'Powered' }, { v:'PWA', l:'Offline Ready' }].map((s, i) => (
+              <div key={i} className="text-center">
+                <div className="text-xl sm:text-2xl font-black bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">{s.v}</div>
+                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">{s.l}</div>
+              </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── Portal Selection ─────────────────────────────── */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 py-12">
-        <div className="text-center mb-10">
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900">Select Your Portal</h2>
-          <p className="text-sm text-slate-500 mt-2">
-            Sign in with your official Google account. Your email will be permanently linked to your portal.
-          </p>
-        </div>
+      {/* ── PORTAL CARDS ── */}
+      <div className="relative py-24 px-4 sm:px-8 bg-[#030712]">
+        <div className="absolute inset-0 grid-bg opacity-50"/>
+        <div className="relative max-w-6xl mx-auto">
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {PORTALS.map((portal) => {
-            const Icon = portal.icon;
-            const isHovered = hoveredPortal === portal.id;
-            return (
-              <div
-                key={portal.id}
+          <div className="text-center mb-14">
+            <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">
+              Choose Your Portal
+            </h2>
+            <p className="text-slate-400 text-sm max-w-md mx-auto">
+              Click your role — sign in once with Google. Your email locks to your portal forever.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {PORTALS.map((portal, i) => (
+              <button key={portal.id}
                 onMouseEnter={() => setHoveredPortal(portal.id)}
                 onMouseLeave={() => setHoveredPortal(null)}
-                className={`group bg-white rounded-2xl border-2 transition-all duration-200 overflow-hidden cursor-pointer shadow-sm hover:shadow-lg ${
-                  isHovered ? 'border-slate-900 -translate-y-0.5' : 'border-slate-200'
+                onClick={() => handlePortalClick(portal.id)}
+                className={`card-glow group relative text-left p-5 rounded-2xl border transition-all duration-300 overflow-hidden ${
+                  hoveredPortal === portal.id
+                    ? `border-transparent ring-2 ${portal.ring} bg-white/5 shadow-2xl ${portal.glow}`
+                    : 'border-white/10 bg-white/[0.03] hover:bg-white/5'
                 }`}
-                onClick={() => handleSignIn(portal.id)}
-              >
-                {/* Card top accent */}
-                <div className={`h-1.5 w-full bg-gradient-to-r ${portal.gradient}`} />
+                style={{ animationDelay: `${i * 0.08}s` }}>
 
-                <div className="p-5">
-                  {/* Icon + label */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={`w-12 h-12 rounded-2xl ${portal.color} text-white flex items-center justify-center shadow-md`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <span className={`text-[10px] font-black px-2 py-1 rounded-full border ${portal.lightBg}`}>
-                      {portal.label}
-                    </span>
-                  </div>
+                {/* Gradient top bar */}
+                <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${portal.gradient} opacity-0 group-hover:opacity-100 transition-opacity`}/>
 
-                  <h3 className="font-black text-slate-900 text-base mb-1">{portal.label} Portal</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-5">{portal.description}</p>
+                {/* Glow behind emoji */}
+                <div className={`absolute top-3 right-3 w-16 h-16 rounded-full bg-gradient-to-r ${portal.gradient} opacity-0 group-hover:opacity-10 blur-xl transition-opacity`}/>
 
-                  {/* Sign in button */}
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleSignIn(portal.id); }}
-                    className={`w-full py-2.5 rounded-xl text-white text-xs font-bold flex items-center justify-center gap-2 transition-all bg-gradient-to-r ${portal.gradient} hover:opacity-90 shadow-md`}
-                  >
-                    {/* Google G */}
-                    <svg className="w-4 h-4" viewBox="0 0 24 24">
-                      <path fill="white" fillOpacity="0.9" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="white" fillOpacity="0.75" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="white" fillOpacity="0.6" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                      <path fill="white" fillOpacity="0.85" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                    </svg>
-                    Sign in as {portal.label}
-                  </button>
+                <div className="text-3xl mb-3">{portal.emoji}</div>
+                <h3 className="font-black text-white text-base mb-1 group-hover:text-white">
+                  {portal.label} Portal
+                </h3>
+                <p className="text-slate-500 text-xs leading-relaxed group-hover:text-slate-400 transition-colors mb-4">
+                  {portal.desc}
+                </p>
+
+                <div className={`flex items-center gap-1.5 text-xs font-bold bg-gradient-to-r ${portal.gradient} bg-clip-text text-transparent`}>
+                  Sign in with Google
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform text-blue-400"/>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              </button>
+            ))}
+          </div>
 
-        {/* Security notice */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 text-xs text-slate-500">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-500" />
-            <span>Each Google account is locked to one portal only</span>
-          </div>
-          <span className="hidden sm:inline text-slate-300">•</span>
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-blue-500" />
-            <span>Identity verified with your Institution ID</span>
-          </div>
-          <span className="hidden sm:inline text-slate-300">•</span>
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-purple-500" />
-            <span>End-to-end encrypted sessions</span>
+          {/* One-time lock notice */}
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 text-xs text-slate-600">
+            {[
+              { icon: ShieldCheck, c:'text-emerald-500', t:'1 Google account = 1 portal only' },
+              { icon: Zap,         c:'text-blue-500',   t:'Role verified by Institution ID' },
+              { icon: Star,        c:'text-violet-500', t:'End-to-end encrypted sessions' },
+            ].map((i, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <i.icon className={`w-4 h-4 ${i.c}`}/>{i.t}
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="border-t border-slate-200 bg-white mt-4">
-        <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="grid grid-cols-2 gap-0.5 w-6 h-6 p-0.5 bg-slate-900 rounded-lg">
-              <div className="bg-blue-400 rounded-xs" />
-              <div className="bg-amber-400 rounded-xs" />
-              <div className="bg-emerald-400 rounded-xs" />
-              <div className="bg-cyan-400 rounded-xs" />
-            </div>
-            <span className="font-black text-slate-800">UNIFY</span>
-            <span className="text-slate-400 text-xs">— Smart Campus Portal</span>
-          </div>
-          <div className="text-[11px] text-slate-400 text-center">
-            Secured with Google OAuth 2.0 &nbsp;•&nbsp; All data encrypted &nbsp;•&nbsp; Offline-ready PWA
+      {/* ── FOOTER ── */}
+      <footer className="border-t border-white/5 bg-[#030712] px-6 py-6">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <UnifyLogo size="sm"/>
+          <div className="text-[11px] text-slate-600 text-center">
+            © 2026 UNIFY • BUG FINDERS • BPUT Hackathon PS-07 &nbsp;•&nbsp; Secured &nbsp;•&nbsp; PWA Ready
           </div>
         </div>
       </footer>
+
+      {/* ── MODAL — pass selectedRole so Step 1 is SKIPPED ── */}
+      {modalOpen && (
+        <GoogleAuthModal
+          isOpen={modalOpen}
+          onClose={() => { setModalOpen(false); setSelectedRole(null); }}
+          onLogin={handleLogin}
+          initialRole={selectedRole}
+        />
+      )}
     </div>
   );
 }

@@ -34,7 +34,18 @@ export default function GoogleAuthModal() {
   const { authModalOpen, setAuthModalOpen, authTargetRole, loginWithGoogle, initialPersonas } = useCampus();
 
   // Step: 'role' → 'google' → 'verify' → done
-  const [step, setStep] = useState('role');
+  const [step, setStep] = useState(initialRole ? 'google' : 'role');
+  useEffect(() => {
+    if (initialRole) {
+      setStep('google');
+      setMeta(ROLE_META[initialRole]);
+    } else {
+      setStep('role');
+      setMeta(null);
+    }
+    setError('');
+    setVerifyCode('');
+  }, [initialRole, isOpen]);
   const [selectedRole, setSelectedRole] = useState(authTargetRole || '');
   const [useCustomEmail, setUseCustomEmail] = useState(false);
   const [customEmail, setCustomEmail] = useState('');
