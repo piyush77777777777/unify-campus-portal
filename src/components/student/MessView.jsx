@@ -7,7 +7,9 @@ import confetti from 'canvas-confetti';
 export default function MessView() {
   const { messData, toggleMealDecision, currentPersona } = useCampus();
   const { t } = useLanguage();
-  const annapurna = messData.annapurnaMess;
+
+  // Safe guard — messData may be undefined/corrupt from localStorage
+  const annapurna = messData?.annapurnaMess || { weeklyMenu: {}, feedbackScore: 4.2, monthlyBudget: 3200, spent: 1890 };
 
   const [selectedDay, setSelectedDay] = useState('Tuesday');
   const [rating, setRating] = useState(5);
@@ -15,7 +17,12 @@ export default function MessView() {
   const [feedbackText, setFeedbackText] = useState('');
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const dayMenu = annapurna.weeklyMenu[selectedDay] || annapurna.weeklyMenu.Tuesday;
+  const dayMenu = annapurna?.weeklyMenu?.[selectedDay] || annapurna?.weeklyMenu?.['Monday'] || {
+    breakfast: { items: ['Idli', 'Sambar', 'Chutney'], calories: 320 },
+    lunch:     { items: ['Rice', 'Dal', 'Sabzi', 'Papad'], calories: 650 },
+    dinner:    { items: ['Chapati', 'Paneer', 'Dal', 'Rice'], calories: 580 }
+  };
+
 
   const handleDecision = (decision) => {
     toggleMealDecision(decision);
