@@ -8,8 +8,27 @@ export default function MessView() {
   const { messData, toggleMealDecision, currentPersona } = useCampus();
   const { t } = useLanguage();
 
-  // Safe guard — messData may be undefined/corrupt from localStorage
-  const annapurna = messData?.annapurnaMess || { weeklyMenu: {}, feedbackScore: 4.2, monthlyBudget: 3200, spent: 1890 };
+  // Safe access — messData may be undefined/corrupt from old localStorage
+  const annapurna = messData?.annapurnaMess || {};
+
+  // Today's menu (strings) — this is the correct property name
+  const todayMenu = annapurna?.todayMenu || {
+    breakfast: 'Idli, Medu Vada, Sambar, Coconut Chutney, Tea/Coffee',
+    lunch:     'Steamed Rice, Dal Tadka, Paneer Sabzi, Papad, Sweet',
+    evening:   'Samosa, Tamarind Chutney, Ginger Tea',
+    dinner:    'Chapati, Dal Makhani, Jeera Rice, Shahi Paneer, Curd'
+  };
+
+  // Weekly reservation counts per day
+  const weeklyReservations = annapurna?.weeklyReservations || {
+    Monday: {breakfast:310,lunch:390,dinner:338},
+    Tuesday:{breakfast:295,lunch:380,dinner:350},
+    Wednesday:{breakfast:320,lunch:400,dinner:360},
+    Thursday:{breakfast:280,lunch:370,dinner:330},
+    Friday:{breakfast:300,lunch:395,dinner:375},
+    Saturday:{breakfast:260,lunch:350,dinner:310},
+    Sunday:{breakfast:340,lunch:415,dinner:390}
+  };
 
   const [selectedDay, setSelectedDay] = useState('Tuesday');
   const [rating, setRating] = useState(5);
@@ -17,11 +36,10 @@ export default function MessView() {
   const [feedbackText, setFeedbackText] = useState('');
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const dayMenu = annapurna?.weeklyMenu?.[selectedDay] || annapurna?.weeklyMenu?.['Monday'] || {
-    breakfast: { items: ['Idli', 'Sambar', 'Chutney'], calories: 320 },
-    lunch:     { items: ['Rice', 'Dal', 'Sabzi', 'Papad'], calories: 650 },
-    dinner:    { items: ['Chapati', 'Paneer', 'Dal', 'Rice'], calories: 580 }
-  };
+  // dayMenu = today's menu strings (same for all days in demo)
+  const dayMenu = todayMenu;
+  // dayCounts = reservation numbers for selected day
+  const dayCounts = weeklyReservations[selectedDay] || weeklyReservations['Tuesday'];
 
 
   const handleDecision = (decision) => {
