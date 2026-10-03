@@ -29,19 +29,25 @@ No sign-up needed. Click any portal card and use demo credentials.
 
 ## 🔐 Demo Login Credentials
 
-> Click any portal card on the landing page → enter these to explore instantly
+> Click any portal card on the landing page → select the demo account → enter the ID below to login instantly
 
-| Portal | Demo Email | ID / Code |
-|--------|------------|-----------|
-| 🎓 Student | `piyush@igit.ac.in` | Reg No: `2201106145` |
-| 📚 Teacher | `avinash@igit.ac.in` | Staff ID: `FAC-001` |
-| 🏠 Warden | `warden@igit.ac.in` | Warden ID: `WAR-01` |
-| 🛡️ Security Guard | `guard@igit.ac.in` | Guard ID: `SEC-01` |
-| 🍽️ Mess Manager | `mess@igit.ac.in` | Mess ID: `MESS-01` |
-| 👨‍👩‍👧 Parent | `parent@gmail.com` | Ward Reg: `2201106145` |
-| 🎯 Principal | `principal@igit.ac.in` | Principal ID: `PRIN-01` |
+| Portal | Demo Email | Verification ID / Code |
+|--------|------------|------------------------|
+| 🎓 Student | `piyush@igit.ac.in` | **Registration No:** `2201106145` |
+| 📚 Teacher | `avinash@igit.ac.in` | **Employee ID:** `FAC-001` |
+| 🏠 Warden | `warden@igit.ac.in` | **Warden ID:** `WAR-01` |
+| 🛡️ Security Guard | `guard@igit.ac.in` | **Badge ID:** `SEC-01` |
+| 🍽️ Mess Manager | `mess@igit.ac.in` | **Staff ID:** `MESS-01` |
+| 👨‍👩‍👧 Parent | `parent@gmail.com` | **Ward's Reg No:** `2201106145` |
+| 🎯 Principal | `principal@igit.ac.in` | **Office ID:** `PRIN-01` |
 
-> ⚠️ **One email = One portal only.** Each email is permanently locked to its role.
+> **How to login:**
+> 1. Click a portal card on the landing page
+> 2. Select the demo account shown (email pre-filled)
+> 3. Enter the **Verification ID** from the table above
+> 4. Click **"Verify & Enter Portal"** ✅
+
+> ⚠️ **One email = One portal only.** Using a custom email? Any non-empty ID works in demo mode.
 
 ---
 
