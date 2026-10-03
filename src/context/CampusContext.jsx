@@ -30,26 +30,44 @@ export function CampusProvider({ children }) {
   const { isOffline, addToOfflineQueue, offlineQueue, clearQueue, showToast, networkMode } = useNetwork();
 
   // Active user persona: 'student' | 'warden' | 'guard' | 'messManager' | 'teacher'
+  const VALID_ROLES = ['student','teacher','warden','guard','messManager','parent','principal'];
+
   const [activeRole, setActiveRole] = useState(() => {
-    return localStorage.getItem('UNIFY_active_role') || 'student';
+    try {
+      const r = localStorage.getItem('UNIFY_active_role');
+      return (r && VALID_ROLES.includes(r)) ? r : 'student';
+    } catch { return 'student'; }
   });
 
   // Current logged in user object
   const [currentUser, setCurrentUser] = useState(() => {
-    const saved = localStorage.getItem('UNIFY_current_user');
-    return saved ? JSON.parse(saved) : {
-      name: "Piyush Mohapatra",
-      email: "piyush.mohapatra@campus.edu",
+    try {
+      const saved = localStorage.getItem('UNIFY_current_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Validate it has required fields
+        if (parsed && parsed.role && VALID_ROLES.includes(parsed.role)) return parsed;
+      }
+    } catch { /* ignore corrupt data */ }
+    return {
+      name: "Piyush Kumar Dey",
+      email: "piyush@igit.ac.in",
       role: "student",
-      provider: "Google",
-      signedInAt: "10:30 AM"
+      provider: "Demo",
+      signedInAt: new Date().toLocaleTimeString()
     };
   });
 
-  // View mode: Landing Page vs Dashboard
+  // View mode: Landing Page vs Dashboard — always start at landing if role seems broken
   const [isLandingPage, setIsLandingPage] = useState(() => {
-    return localStorage.getItem('UNIFY_view_mode') !== 'app';
+    try {
+      const mode = localStorage.getItem('UNIFY_view_mode');
+      const role = localStorage.getItem('UNIFY_active_role');
+      // Only skip landing page if both mode=app AND role is valid
+      return !(mode === 'app' && role && VALID_ROLES.includes(role));
+    } catch { return true; }
   });
+
 
   // Google Auth & Email Receipt Dialog States
   const [authModalOpen, setAuthModalOpen] = useState(false);

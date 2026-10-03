@@ -22,10 +22,19 @@ import {
 } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab }) {
-  const { activeRole, setActiveRole, currentPersona, initialPersonas, notices } = useCampus();
+  const { activeRole, setActiveRole, currentPersona, initialPersonas, notices, setIsLandingPage } = useCampus();
   const { currentLang, setCurrentLang, t } = useLanguage();
   const { networkMode, setNetworkMode, isOffline, offlineQueue } = useNetwork();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    // Clear all UNIFY session data so user goes back to landing page cleanly
+    ['UNIFY_active_role','UNIFY_current_user','UNIFY_view_mode','unify_email_role_map'].forEach(k => {
+      try { localStorage.removeItem(k); } catch {}
+    });
+    setIsLandingPage(true);
+  };
+
 
   // Unacknowledged notice count
   const unreadNoticesCount = notices.filter(n => !n.hasUserAcknowledged && n.actionRequired).length;
@@ -217,6 +226,21 @@ export default function Navbar({ activeTab, setActiveTab }) {
                       </button>
                     );
                   })}
+                </div>
+                {/* ── LOGOUT ── */}
+                <div className="px-3 pb-2 pt-1 border-t border-slate-100 mt-1">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center flex-shrink-0 text-base">
+                      🚪
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold">Logout / Switch Portal</div>
+                      <div className="text-[10px] text-rose-500">Return to landing page</div>
+                    </div>
+                  </button>
                 </div>
               </div>
             </div>
