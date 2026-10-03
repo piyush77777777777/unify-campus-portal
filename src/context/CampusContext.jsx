@@ -80,30 +80,15 @@ export function CampusProvider({ children }) {
     token: ''
   });
 
-  const [gatePasses, setGatePasses] = useState(() => {
-    const saved = localStorage.getItem('UNIFY_gate_passes');
-    return saved ? JSON.parse(saved) : initialGatePasses;
-  });
+  const [gatePasses, setGatePasses] = useState(() => { try { const s = localStorage.getItem('UNIFY_gate_passes'); const p = s ? JSON.parse(s) : null; return (Array.isArray(p) && p.length >= 0) ? p : initialGatePasses; } catch { return initialGatePasses; } });
 
-  const [complaints, setComplaints] = useState(() => {
-    const saved = localStorage.getItem('UNIFY_complaints');
-    return saved ? JSON.parse(saved) : initialComplaints;
-  });
+  const [complaints, setComplaints] = useState(() => { try { const s = localStorage.getItem('UNIFY_complaints'); const p = s ? JSON.parse(s) : null; return (Array.isArray(p) && p.length >= 0) ? p : initialComplaints; } catch { return initialComplaints; } });
 
-  const [notices, setNotices] = useState(() => {
-    const saved = localStorage.getItem('UNIFY_notices');
-    return saved ? JSON.parse(saved) : initialNotices;
-  });
+  const [notices, setNotices] = useState(() => { try { const s = localStorage.getItem('UNIFY_notices'); const p = s ? JSON.parse(s) : null; return (Array.isArray(p) && p.length >= 0) ? p : initialNotices; } catch { return initialNotices; } });
 
-  const [messData, setMessData] = useState(() => {
-    const saved = localStorage.getItem('UNIFY_mess_data');
-    return saved ? JSON.parse(saved) : initialMessData;
-  });
+  const [messData, setMessData] = useState(() => { try { const s = localStorage.getItem('UNIFY_mess_data'); const p = s ? JSON.parse(s) : null; return (p && p.annapurnaMess) ? p : initialMessData; } catch { return initialMessData; } });
 
-  const [auditLogs, setAuditLogs] = useState(() => {
-    const saved = localStorage.getItem('UNIFY_audit_logs');
-    return saved ? JSON.parse(saved) : initialAuditLogs;
-  });
+  const [auditLogs, setAuditLogs] = useState(() => { try { const s = localStorage.getItem('UNIFY_audit_logs'); const p = s ? JSON.parse(s) : null; return (Array.isArray(p)) ? p : initialAuditLogs; } catch { return initialAuditLogs; } });
 
   // Current active persona details
   const currentPersona = initialPersonas[activeRole] || initialPersonas.student;

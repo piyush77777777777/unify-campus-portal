@@ -34,6 +34,17 @@ import DocumentModal from './components/student/DocumentModal';
 import EmergencyAlertModal from './components/common/EmergencyAlertModal';
 import CampusBotModal from './components/common/CampusBotModal';
 
+// ─── Auto-clear stale localStorage on version change ───────────────────────
+const APP_VERSION = '2.7';
+try {
+  const storedVersion = localStorage.getItem('UNIFY_version');
+  if (storedVersion !== APP_VERSION) {
+    ['UNIFY_gate_passes','UNIFY_complaints','UNIFY_notices','UNIFY_mess_data','UNIFY_audit_logs','UNIFY_current_user'].forEach(k => localStorage.removeItem(k));
+    localStorage.setItem('UNIFY_version', APP_VERSION);
+  }
+} catch {}
+// ────────────────────────────────────────────────────────────────────────────
+
 function MainApp() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
