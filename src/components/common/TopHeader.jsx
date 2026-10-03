@@ -52,7 +52,7 @@ export default function TopHeader({ activeTab, setMobileOpen }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const unreadCount = notices.filter(n => !n.hasUserAcknowledged && n.actionRequired).length;
+  const unreadCount = (notices||[]).filter(n => !n.hasUserAcknowledged && n.actionRequired).length;
 
   useEffect(() => {
     const handler = (e) => {

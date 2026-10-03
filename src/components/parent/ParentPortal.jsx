@@ -26,7 +26,7 @@ export default function ParentPortal() {
     { name: 'Algorithms', pct: 80 },        { name: 'Computer Networks', pct: 80 }
   ];
 
-  const wardPasses = gatePasses.filter(gp => gp.regNo === '2201106145');
+  const wardPasses = (gatePasses||[]).filter(gp => gp.regNo === '2201106145');
 
   const TABS = [
     { id: 'overview',    label: 'Overview'    },

@@ -37,7 +37,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
 
 
   // Unacknowledged notice count
-  const unreadNoticesCount = notices.filter(n => !n.hasUserAcknowledged && n.actionRequired).length;
+  const unreadNoticesCount = (notices||[]).filter(n => !n.hasUserAcknowledged && n.actionRequired).length;
 
   const roleOptions = [
     { key: 'student', label: t('roles.student'), name: initialPersonas.student.name, icon: GraduationCap, color: 'bg-blue-600' },

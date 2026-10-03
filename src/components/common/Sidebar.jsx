@@ -13,7 +13,7 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
   const { currentLang, setCurrentLang } = useLanguage();
   const { networkMode, setNetworkMode } = useNetwork();
 
-  const unreadCount = notices.filter(n => !n.hasUserAcknowledged && n.actionRequired).length;
+  const unreadCount = (notices||[]).filter(n => !n.hasUserAcknowledged && n.actionRequired).length;
 
   // ── Role-specific navigation items ──────────────────────
   const getNavSections = () => {

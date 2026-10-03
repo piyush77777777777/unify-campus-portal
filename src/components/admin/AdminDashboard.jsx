@@ -39,10 +39,10 @@ export default function AdminDashboard() {
   const [resolutionNote, setResolutionNote] = useState('');
 
   // Critical metrics
-  const pendingPasses = gatePasses.filter(gp => gp.status === 'PENDING');
-  const outsideStudents = gatePasses.filter(gp => gp.status === 'CHECKED_OUT');
-  const overdueTickets = complaints.filter(c => c.status === 'ESCALATED' || c.slaBreached);
-  const totalActiveTickets = complaints.filter(c => c.status !== 'RESOLVED').length;
+  const pendingPasses = (gatePasses||[]).filter(gp => gp.status === 'PENDING');
+  const outsideStudents = (gatePasses||[]).filter(gp => gp.status === 'CHECKED_OUT');
+  const overdueTickets = (complaints||[]).filter(c => c.status === 'ESCALATED' || c.slaBreached);
+  const totalActiveTickets = (complaints||[]).filter(c => c.status !== 'RESOLVED').length;
 
   const handleResolveTicket = (ticketId) => {
     updateComplaintStatus(ticketId, 'RESOLVED', resolutionNote || 'Resolved by Chief Maintenance Team.');
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Ticket Ageing & SLA Tracker ({complaints.length})
+            Ticket Ageing & SLA Tracker ({(complaints||[]).length})
           </button>
           <button
             onClick={() => setActiveSubTab('approvals')}
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Campus Audit Trail ({auditLogs.length})
+            Campus Audit Trail ({(auditLogs||[]).length})
           </button>
         </div>
       </div>
@@ -216,7 +216,7 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {complaints.map((ticket) => (
+                  {(complaints||[]).map((ticket) => (
                     <tr
                       key={ticket.id}
                       className={`hover:bg-slate-50/80 transition-colors ${
@@ -477,7 +477,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="divide-y divide-slate-100">
-            {auditLogs.map((log) => (
+            {(auditLogs||[]).map((log) => (
               <div key={log.id} className="py-3 flex items-start justify-between gap-4 text-xs">
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">

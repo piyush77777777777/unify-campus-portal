@@ -26,7 +26,7 @@ export default function NoticeBoard() {
   const [ratings, setRatings] = useState({});
 
   const canPublish = ['warden','teacher','principal','messManager'].includes(activeRole);
-  const filtered = filter === 'ALL' ? notices : notices.filter(n => n.priority === filter);
+  const filtered = filter === 'ALL' ? (notices||[]) : (notices||[]).filter(n => n.priority === filter);
 
   const handlePublish = () => {
     if (!form.title || !form.content) return;
@@ -47,10 +47,10 @@ export default function NoticeBoard() {
     ...p, channels: p.channels.includes(ch) ? p.channels.filter(c=>c!==ch) : [...p.channels, ch]
   }));
 
-  const totalNotices = notices.length;
-  const avgReadRate = Math.round((notices.reduce((s,n)=> s+(n.readReceiptsCount||0),0) / notices.reduce((s,n)=> s+(n.totalTargetUsers||1),0))*100);
-  const highPriority = notices.filter(n=>n.priority==='HIGH').length;
-  const unread = notices.filter(n=>!n.hasUserAcknowledged&&n.actionRequired).length;
+  const totalNotices = (notices||[]).length;
+  const avgReadRate = Math.round(((notices||[]).reduce((s,n)=> s+(n.readReceiptsCount||0),0) / (notices||[]).reduce((s,n)=> s+(n.totalTargetUsers||1),0))*100);
+  const highPriority = (notices||[]).filter(n=>n.priority==='HIGH').length;
+  const unread = (notices||[]).filter(n=>!n.hasUserAcknowledged&&n.actionRequired).length;
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -129,7 +129,7 @@ export default function NoticeBoard() {
         <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
           <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2"><BarChart3 className="w-4 h-4 text-blue-600"/>Notification Analytics</h4>
           <div className="space-y-3">
-            {notices.map((n,i)=>{
+            {(notices||[]).map((n,i)=>{
               const rate = n.totalTargetUsers ? Math.round((n.readReceiptsCount/n.totalTargetUsers)*100) : 0;
               return (
                 <div key={i} className="space-y-1">
