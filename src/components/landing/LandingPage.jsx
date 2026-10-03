@@ -104,10 +104,11 @@ export default function LandingPage() {
   };
 
   const handleLogin = (role, user) => {
-    loginWithGoogle(role, user);
+    loginWithGoogle(user.email || (role + '@igit.ac.in'), role, user.name || '');
     setIsLandingPage(false);
     setModalOpen(false);
   };
+
 
   return (
     <div className="min-h-screen bg-[#030712] text-white overflow-x-hidden">

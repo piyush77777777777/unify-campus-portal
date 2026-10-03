@@ -44,9 +44,9 @@ export default function GoogleAuthModal({ isOpen: propIsOpen, onClose: propOnClo
   };
   const handleLogin = (role, acc) => {
     if (propOnLogin) propOnLogin(role, acc);
-    else if (loginWithGoogle) loginWithGoogle(role, acc);
+    else if (loginWithGoogle) loginWithGoogle(acc.email, role, acc.name);
     handleClose();
-  };
+  };;
 
   const [step, setStep]   = useState('role');
   const [role, setRole]   = useState(null);
