@@ -80,7 +80,7 @@ const TAGS = {
 };
 
 // ─── CSS 3D Building ───────────────────────────────────────────────────────
-function Building3D({ b, isSelected, selFloor, onClick, tick }) {
+function Building3D({ b, isSelected, selFloor, onClick, tick, revealed }) {
   const { col, row, w, d, floors, base, light, dark } = b;
   const totalH = floors * FH;
   const W = w * CELL, D = d * CELL;
@@ -92,6 +92,10 @@ function Building3D({ b, isSelected, selFloor, onClick, tick }) {
     <div onClick={onClick} style={{
       position:"absolute", left:L, top:T, width:W, height:D,
       transformStyle:"preserve-3d", cursor:"pointer",
+      /* Entrance animation: rise from underground when revealed */
+      opacity: revealed ? 1 : 0,
+      transform: revealed ? "translateZ(0px)" : "translateZ(-420px)",
+      transition: "opacity 0.6s ease, transform 0.7s cubic-bezier(0.34,1.56,0.64,1)",
     }}>
       {/* Ground footprint */}
       <div style={{
@@ -292,14 +296,38 @@ export default function CampusNav3D() {
   const [step,   setStep]   = useState(0);
   const [view,   setView]   = useState("map");
   const [tick,   setTick]   = useState(0);
-  const [rotX,   setRotX]   = useState(52);
-  const [rotZ,   setRotZ]   = useState(45);
+
+  // ── 2-axis orbit camera ────────────────────────────────────────────────
+  // Transform order: rotateZ(azim) THEN rotateX(elev)
+  // → azim controls horizontal orbit (around world Z/vertical axis)
+  // → elev controls tilt (how high up you look from)
+  const [elev, setElev] = useState(52);   // vertical tilt  10–85
+  const [azim, setAzim] = useState(45);   // horizontal orbit, free 360°
   const dragging = useRef(false);
   const last     = useRef({x:0,y:0});
 
+  // ── Staggered building reveal ──────────────────────────────────────────
+  const [visibleCount, setVisibleCount] = useState(0);
+
+  // Tick for beacon animation
   useEffect(()=>{
     const t = setInterval(()=>setTick(n=>n+1),700);
     return ()=>clearInterval(t);
+  },[]);
+
+  // Reveal buildings one by one, 220ms apart, starting after 400ms
+  useEffect(()=>{
+    setVisibleCount(0);
+    let idx = 0;
+    const scheduleNext = () => {
+      if(idx < BUILDINGS.length) {
+        idx++;
+        setVisibleCount(idx);
+        setTimeout(scheduleNext, 220);
+      }
+    };
+    const start = setTimeout(scheduleNext, 400);
+    return () => clearTimeout(start);
   },[]);
 
   const filtered = search.length>1
@@ -315,16 +343,39 @@ export default function CampusNav3D() {
   const dirs  = dest ? DIRS[dest.building]||[] : [];
   const destB = dest ? BUILDINGS.find(b=>b.id===dest.building) : null;
 
-  // Mouse drag to orbit
-  const onMouseDown = e => { dragging.current=true; last.current={x:e.clientX,y:e.clientY}; };
+  // ── Mouse drag — true 2-axis orbit ─────────────────────────────────────
+  const onMouseDown = e => {
+    dragging.current = true;
+    last.current = {x: e.clientX, y: e.clientY};
+    e.preventDefault();
+  };
   const onMouseMove = e => {
     if(!dragging.current) return;
-    const dx = e.clientX-last.current.x, dy = e.clientY-last.current.y;
-    setRotZ(r=>Math.max(-180,Math.min(180,r+dx*0.4)));
-    setRotX(r=>Math.max(15,Math.min(80,r-dy*0.4)));
-    last.current={x:e.clientX,y:e.clientY};
+    const dx = e.clientX - last.current.x;
+    const dy = e.clientY - last.current.y;
+    // Horizontal drag → azimuth (free 360°)
+    setAzim(a => a + dx * 0.55);
+    // Vertical drag → elevation (clamped 8–85°)
+    setElev(e => Math.max(8, Math.min(85, e - dy * 0.45)));
+    last.current = {x: e.clientX, y: e.clientY};
   };
-  const onMouseUp = ()=>{ dragging.current=false; };
+  const onMouseUp = () => { dragging.current = false; };
+
+  // ── Touch drag support ──────────────────────────────────────────────────
+  const onTouchStart = e => {
+    dragging.current = true;
+    last.current = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+  };
+  const onTouchMove = e => {
+    if(!dragging.current) return;
+    const dx = e.touches[0].clientX - last.current.x;
+    const dy = e.touches[0].clientY - last.current.y;
+    setAzim(a => a + dx * 0.55);
+    setElev(e => Math.max(8, Math.min(85, e - dy * 0.45)));
+    last.current = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+  };
+  const onTouchEnd = () => { dragging.current = false; };
+
 
   // Building detail view
   if(view==="building" && selB){
@@ -467,7 +518,7 @@ export default function CampusNav3D() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-cyan-400 font-bold bg-cyan-900/30 border border-cyan-700/40 px-2 py-0.5 rounded-full">REAL 3D</span>
-              <button onClick={()=>{setRotX(52);setRotZ(45);}}
+              <button onClick={()=>{setElev(52);setAzim(45);setVisibleCount(0);setTimeout(()=>{let i=0;const go=()=>{if(i<BUILDINGS.length){i++;setVisibleCount(i);setTimeout(go,220);}};go();},400);}}
                 className="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors" title="Reset view">
                 <RotateCcw className="w-3.5 h-3.5 text-slate-400"/>
               </button>
@@ -487,8 +538,11 @@ export default function CampusNav3D() {
 
           {/* THE REAL 3D MAP — bigger and full width */}
           <div
-            style={{height:580, perspective:"1600px", overflow:"hidden", position:"relative", userSelect:"none"}}
-            onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={onMouseUp}>
+            style={{height:580, perspective:"1600px", overflow:"hidden", position:"relative",
+              userSelect:"none", cursor: "grab"}}
+            onMouseDown={onMouseDown} onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp} onMouseLeave={onMouseUp}
+            onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
 
             {/* Dark space background */}
             <div style={{
@@ -496,11 +550,18 @@ export default function CampusNav3D() {
               backgroundImage:"radial-gradient(ellipse at 30% 40%,#0c1a3a 0%,transparent 60%),radial-gradient(ellipse at 70% 60%,#1a0c3a 0%,transparent 60%),radial-gradient(ellipse at 50% 20%,#0a2040 0%,transparent 50%)",
             }}/>
 
-            {/* Scene — centred, bigger scale */}
+            {/* Drag hint */}
+            <div style={{position:"absolute",bottom:8,left:"50%",transform:"translateX(-50%)",
+              fontSize:10, color:"rgba(100,130,200,0.7)", fontWeight:"bold", pointerEvents:"none",
+              letterSpacing:1, zIndex:10}}>
+              ↔ DRAG TO ORBIT  ↕ TILT
+            </div>
+
+            {/* Scene — correct transform order: rotateZ first (azimuth), then rotateX (elevation) */}
             <div style={{
               position:"absolute", top:"60%", left:"42%",
               transformStyle:"preserve-3d",
-              transform:`rotateX(${rotX}deg) rotateZ(${rotZ}deg)`,
+              transform:`rotateZ(${azim}deg) rotateX(${elev}deg)`,
               width:0, height:0,
             }}>
               {/* Ground plane */}
@@ -528,11 +589,12 @@ export default function CampusNav3D() {
                 <div style={{position:"absolute",left:5.5*CELL,top:6*CELL+15,fontSize:8,color:"#14532d",fontWeight:"bold"}}>Campus Garden</div>
               </div>
 
-              {/* Buildings */}
-              {BUILDINGS.map(b=>(
+              {/* Buildings — revealed one by one with entrance animation */}
+              {BUILDINGS.map((b, idx)=>(
                 <Building3D key={b.id} b={b}
                   isSelected={selB?.id===b.id}
                   selFloor={selF} tick={tick}
+                  revealed={idx < visibleCount}
                   onClick={()=>{ if(selB?.id===b.id) openB(b); else {setSelB(b);setSelF(0);} }}/>
               ))}
 
