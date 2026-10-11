@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Search, Navigation, MapPin, X, ChevronRight, Layers, RotateCcw, Building2, Users, Coffee, BookOpen } from "lucide-react";
 
-const CELL = 72;
-const FH   = 38;
+const CELL = 52;
+const FH   = 30;
 
 const BUILDINGS = [
   { id:"library",  name:"Central Library",     short:"Library",  col:1,  row:4,  w:2, d:2, floors:3,
@@ -511,7 +511,7 @@ export default function CampusNav3D() {
 
             {/* Scene — FIXED angle, never rotates */}
             <div style={{
-              position:"absolute", top:"60%", left:"42%",
+              position:"absolute", top:"22%", left:"48%",
               transformStyle:"preserve-3d",
               transform:`rotateZ(${AZIM}deg) rotateX(${ELEV}deg)`,
               width:0, height:0,
@@ -541,12 +541,12 @@ export default function CampusNav3D() {
                 <div style={{position:"absolute",left:5.5*CELL,top:6*CELL+15,fontSize:8,color:"#14532d",fontWeight:"bold"}}>Campus Garden</div>
               </div>
 
-              {/* Buildings — click to select and show info panel */}
+              {/* Buildings — all visible immediately, click to select */}
               {BUILDINGS.map((b, idx)=>(
                 <Building3D key={b.id} b={b}
                   isSelected={selB?.id===b.id}
                   selFloor={selF} tick={tick}
-                  revealed={idx < visibleCount}
+                  revealed={true}
                   onClick={()=>{ setSelB(s => s?.id===b.id ? null : b); setSelF(0); }}/>
               ))}
 
