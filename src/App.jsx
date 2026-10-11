@@ -64,7 +64,7 @@ function MainApp() {
 
   if (isLandingPage) {
     return (
-      <div className="min-h-screen bg-slate-50 font-sans">
+      <div className="min-h-screen landing-bg font-sans relative overflow-hidden">
         <LandingPage />
         <GoogleAuthModal />
         <EmailReceiptModal />
@@ -155,7 +155,7 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex font-sans selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen app-bg text-slate-900 flex font-sans selection:bg-blue-500 selection:text-white">
       {/* Desktop sidebar — hidden on mobile */}
       <Sidebar
         activeTab={activeTab}
@@ -173,17 +173,25 @@ function MainApp() {
           {renderTabContent()}
         </main>
 
-        {/* Desktop footer — hidden on mobile */}
-        <footer className="hidden lg:block bg-white border-t border-slate-200 py-4 text-xs text-slate-500">
+        {/* Desktop footer */}
+        <footer className="hidden lg:block border-t border-white/60 py-4 text-xs"
+          style={{background:"linear-gradient(90deg,#f0f4ff,#faf5ff,#f0fdfa)"}}>
           <div className="max-w-7xl mx-auto px-8 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-slate-800">UNIFY</span>
-              <span>•</span>
-              <span>Smart Campus Management System</span>
+              <span className="font-extrabold text-grad-blue text-sm">UNIFY</span>
+              <span className="text-slate-400">•</span>
+              <span className="text-slate-600 font-medium">Smart Campus Management — Trident Academy of Technology</span>
             </div>
-            <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
-              Offline PWA Ready
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-emerald-700 border border-emerald-200"
+                style={{background:"linear-gradient(135deg,#d1fae5,#a7f3d0)"}}>
+                ✓ Offline PWA Ready
+              </span>
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-blue-700 border border-blue-200"
+                style={{background:"linear-gradient(135deg,#dbeafe,#bfdbfe)"}}>
+                v2.7 Live
+              </span>
+            </div>
           </div>
         </footer>
       </div>
