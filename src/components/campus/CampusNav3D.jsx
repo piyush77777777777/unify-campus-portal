@@ -191,30 +191,92 @@ function Building3D({ b, isSelected, selFloor, onClick, tick }) {
         border:`1px solid ${base}28`,
       }}/>
 
-      {/* ROOF */}
+      {/* ROOF — with building name printed on top */}
       <div style={{
         position:"absolute", inset:0,
         transform:`translateZ(${totalH}px)`,
         background: isSelected ? light : `${base}cc`,
         border:`${isSelected?2:1}px solid ${isSelected?"#ffffff":light}`,
         boxShadow: isSelected?`0 0 20px ${base}99`:"none",
-      }}/>
+        display:"flex", flexDirection:"column",
+        alignItems:"center", justifyContent:"center", gap:1,
+        overflow:"hidden",
+      }}>
+        {/* Short name on roof */}
+        <div style={{
+          fontSize: Math.max(7, Math.min(11, W/b.short.length*0.7)),
+          fontWeight:900, color: isSelected?"#1e1b4b":"#ffffff",
+          textAlign:"center", letterSpacing:0.5, lineHeight:1.2,
+          textShadow: isSelected?"none":"0 1px 3px rgba(0,0,0,0.5)",
+          padding:"0 4px", userSelect:"none",
+        }}>{b.short}</div>
+        <div style={{
+          fontSize:6, fontWeight:700,
+          color: isSelected?"#3730a3":"rgba(255,255,255,0.7)",
+          letterSpacing:0.5, userSelect:"none",
+        }}>{floors} FLOORS</div>
+      </div>
 
-      {/* Float label above roof */}
+      {/* Name on FRONT WALL (south face) — readable from front view */}
+      <div style={{
+        position:"absolute", bottom:0, left:0, width:W, height:totalH,
+        transformOrigin:"center bottom",
+        transform:"rotateX(-90deg)",
+        pointerEvents:"none",
+        display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", gap:2,
+      }}>
+        <div style={{
+          fontSize: Math.max(8, Math.min(13, W/8)),
+          fontWeight:900, color:"#ffffff",
+          textShadow:`0 0 12px ${base}, 0 2px 4px rgba(0,0,0,0.8)`,
+          letterSpacing:0.5, textAlign:"center", padding:"0 6px",
+          userSelect:"none",
+        }}>{b.name}</div>
+        <div style={{
+          display:"flex", gap:3, alignItems:"center",
+        }}>
+          {Array.from({length:floors},(_,i)=>(
+            <div key={i} style={{
+              width:6, height:10,
+              background: base,
+              opacity: 0.4+i*0.15,
+              border:`0.5px solid ${light}66`,
+              borderRadius:1,
+            }}/>
+          ))}
+          <span style={{fontSize:7,color:light,fontWeight:"bold",marginLeft:2}}>{floors}F</span>
+        </div>
+      </div>
+
+      {/* Floating badge ABOVE roof — always visible */}
       <div style={{
         position:"absolute",
         left:W/2, top:D/2,
-        transform:`translateZ(${totalH+12}px) rotateX(-52deg) rotateZ(-45deg)`,
-        transformOrigin:"center bottom",
-        background:"rgba(2,12,27,0.85)",
-        border:`1px solid ${base}88`,
-        borderRadius:6, padding:"2px 8px",
-        color:"#ffffff", fontSize:9, fontWeight:700, whiteSpace:"nowrap",
+        transform:`translateZ(${totalH+18}px) rotateZ(-45deg) rotateX(-52deg)`,
+        transformOrigin:"center center",
         pointerEvents:"none",
-        backdropFilter:"blur(4px)",
-        textShadow:`0 0 8px ${base}`,
       }}>
-        {b.short} <span style={{color:light,fontSize:8}}>•{floors}F</span>
+        <div style={{
+          background: isSelected ? base : "rgba(2,12,27,0.92)",
+          border:`1.5px solid ${isSelected?"#ffffff":base}`,
+          borderRadius:8, padding:"3px 10px",
+          color:"#ffffff", fontSize:10, fontWeight:900, whiteSpace:"nowrap",
+          backdropFilter:"blur(6px)",
+          textShadow: isSelected?`0 0 10px #fff`:`0 0 8px ${base}`,
+          boxShadow: isSelected?`0 0 20px ${base}, 0 4px 12px rgba(0,0,0,0.5)`:`0 4px 12px rgba(0,0,0,0.5)`,
+          textAlign:"center",
+          transform:"translate(-50%,-50%)",
+          letterSpacing:0.3,
+        }}>
+          {b.short}
+          <span style={{fontSize:8,color:light,marginLeft:4,fontWeight:700}}>•{floors}F</span>
+        </div>
+        {/* Connector line down to roof */}
+        <div style={{
+          width:1, height:14,
+          background:`linear-gradient(${base},transparent)`,
+          margin:"0 auto",
+        }}/>
       </div>
     </div>
   );
