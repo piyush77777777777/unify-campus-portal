@@ -25,7 +25,7 @@ import ParentPortal from './components/parent/ParentPortal';
 import PrincipalPortal from './components/principal/PrincipalPortal';
 import CalendarView from './components/campus/CalendarView';
 import BusTracker from './components/campus/BusTracker';
-import CampusMap from './components/campus/CampusMap';
+// CampusMap removed — using CampusNav3D (no external API needed)
 import AIAnalytics from './components/analytics/AIAnalytics';
 import CampusNav3D from './components/campus/CampusNav3D';
 import SmartTimetable from './components/student/SmartTimetable';

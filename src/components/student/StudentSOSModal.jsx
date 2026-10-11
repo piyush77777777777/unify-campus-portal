@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { GoogleMap, Marker, Circle } from '@react-google-maps/api';
+﻿import React, { useState, useEffect } from 'react';
 import { useCampus } from '../../context/CampusContext';
-import { useGoogleMaps, CAMPUS_CENTER } from '../../hooks/useGoogleMaps';
-import { firestoreDB } from '../../services/firebase';
-import { db as supaDB } from '../../services/supabase';
 import { AlertTriangle, MapPin, Phone, CheckCircle2, Loader, Navigation } from 'lucide-react';
 
+const CAMPUS_CENTER = { lat: 21.2514, lng: 83.9812 };
+
+
 const RECIPIENTS = [
-  { role:'Teacher On Duty', name:'Dr. Avinash Patra', phone:'9437012345', emoji:'👩‍🏫' },
-  { role:'Security Guard',  name:'Ramesh Behera',     phone:'9437056789', emoji:'🛡️' },
-  { role:'Dean of Students',name:'Prof. S. K. Nayak', phone:'9437098765', emoji:'🎓' },
+  { role:'Teacher On Duty', name:'Dr. Avinash Patra', phone:'9437012345', emoji:'ðŸ‘©â€ðŸ«' },
+  { role:'Security Guard',  name:'Ramesh Behera',     phone:'9437056789', emoji:'ðŸ›¡ï¸' },
+  { role:'Dean of Students',name:'Prof. S. K. Nayak', phone:'9437098765', emoji:'ðŸŽ“' },
 ];
 
 export default function StudentSOSModal({ isOpen, onClose }) {
   const { currentPersona, addAuditLog } = useCampus();
-  const { isLoaded } = useGoogleMaps();
+  const isLoaded = true; // No Google Maps needed
   const [phase, setPhase] = useState('idle'); // idle | locating | sending | done
   const [gpsPos, setGpsPos] = useState(null);
   const [gpsError, setGpsError] = useState('');
@@ -30,7 +29,7 @@ export default function StudentSOSModal({ isOpen, onClose }) {
         const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setGpsPos(loc);
         setPhase('ready');
-        // Reverse geocode (works without key — uses Nominatim as fallback)
+        // Reverse geocode (works without key â€” uses Nominatim as fallback)
         if (window.google?.maps?.Geocoder) {
           new window.google.maps.Geocoder().geocode({ location: loc }, (res, status) => {
             if (status === 'OK' && res[0]) setAddress(res[0].formatted_address);
@@ -42,7 +41,7 @@ export default function StudentSOSModal({ isOpen, onClose }) {
             .catch(() => setAddress(`${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`));
         }
       },
-      err => { setGpsError('GPS unavailable — using campus location'); setGpsPos(CAMPUS_CENTER); setPhase('ready'); },
+      err => { setGpsError('GPS unavailable â€” using campus location'); setGpsPos(CAMPUS_CENTER); setPhase('ready'); },
       { timeout:8000, enableHighAccuracy:true }
     );
   }, [isOpen]);
@@ -64,7 +63,7 @@ export default function StudentSOSModal({ isOpen, onClose }) {
       firestoreDB.sos.send(alertPayload),
       supaDB.sosAlerts.send(alertPayload),
     ]);
-    if (addAuditLog) addAuditLog(currentPersona?.name, 'SOS_ALERT_SENT', `SOS from Room ${currentPersona?.room} — GPS: ${address}`, 'red');
+    if (addAuditLog) addAuditLog(currentPersona?.name, 'SOS_ALERT_SENT', `SOS from Room ${currentPersona?.room} â€” GPS: ${address}`, 'red');
     // Stagger dispatch notifications
     for (let i = 0; i < RECIPIENTS.length; i++) {
       await new Promise(r => setTimeout(r, 700));
@@ -82,9 +81,9 @@ export default function StudentSOSModal({ isOpen, onClose }) {
 
         {/* Top bar */}
         <div className="bg-gradient-to-r from-rose-600 to-red-700 p-5 text-white text-center">
-          <div className="text-3xl mb-1">🚨</div>
+          <div className="text-3xl mb-1">ðŸš¨</div>
           <h2 className="font-black text-lg">EMERGENCY SOS</h2>
-          <p className="text-xs text-rose-100 mt-0.5">Alerts Teacher • Security • Dean instantly</p>
+          <p className="text-xs text-rose-100 mt-0.5">Alerts Teacher â€¢ Security â€¢ Dean instantly</p>
         </div>
 
         <div className="p-5 space-y-4">
@@ -105,7 +104,7 @@ export default function StudentSOSModal({ isOpen, onClose }) {
                   {featureType:'road',elementType:'geometry',stylers:[{color:'#ffffff'}]},
                 ]}}>
                 <Marker position={gpsPos} icon={{
-                  url:`data:image/svg+xml;charset=UTF-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><circle cx="20" cy="20" r="18" fill="#dc2626" stroke="white" stroke-width="3"/><text x="20" y="26" text-anchor="middle" font-size="18">🚨</text></svg>')}`,
+                  url:`data:image/svg+xml;charset=UTF-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><circle cx="20" cy="20" r="18" fill="#dc2626" stroke="white" stroke-width="3"/><text x="20" y="26" text-anchor="middle" font-size="18">ðŸš¨</text></svg>')}`,
                   scaledSize: new window.google.maps.Size(40,40),
                   anchor: new window.google.maps.Point(20,20),
                 }}/>
@@ -115,7 +114,7 @@ export default function StudentSOSModal({ isOpen, onClose }) {
               <div className="h-full flex flex-col items-center justify-center gap-2 bg-slate-50">
                 <MapPin className="w-8 h-8 text-rose-400"/>
                 <div className="text-center">
-                  <p className="text-xs font-bold text-slate-700">📍 Location Acquired</p>
+                  <p className="text-xs font-bold text-slate-700">ðŸ“ Location Acquired</p>
                   <p className="text-[10px] text-slate-500 mt-0.5">Add VITE_GOOGLE_MAPS_API_KEY for live map</p>
                 </div>
               </div>
@@ -128,7 +127,7 @@ export default function StudentSOSModal({ isOpen, onClose }) {
             <div>
               <div className="text-[10px] font-bold text-slate-500 uppercase">Your Location</div>
               <div className="text-xs font-bold text-slate-800 leading-snug">{address}</div>
-              {gpsError && <div className="text-[10px] text-amber-600 mt-0.5">⚠️ {gpsError}</div>}
+              {gpsError && <div className="text-[10px] text-amber-600 mt-0.5">âš ï¸ {gpsError}</div>}
             </div>
           </div>
 
@@ -155,18 +154,18 @@ export default function StudentSOSModal({ isOpen, onClose }) {
           {/* Helpline */}
           <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-center">
             <div className="text-xs font-bold text-rose-800">National Emergency Helpline</div>
-            <a href="tel:112" className="text-xl font-black text-rose-700 block mt-0.5">📞 112</a>
+            <a href="tel:112" className="text-xl font-black text-rose-700 block mt-0.5">ðŸ“ž 112</a>
           </div>
 
           {/* Action */}
           {phase === 'done' ? (
             <div className="text-center space-y-3">
-              <div className="text-emerald-600 font-black">✅ All 3 contacts alerted!</div>
+              <div className="text-emerald-600 font-black">âœ… All 3 contacts alerted!</div>
               <div className="flex gap-2">
                 {RECIPIENTS.map(r=>(
                   <a key={r.role} href={`tel:${r.phone}`}
                     className="flex-1 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-bold text-center">
-                    📞 {r.name.split(' ')[1] || r.role.split(' ')[0]}
+                    ðŸ“ž {r.name.split(' ')[1] || r.role.split(' ')[0]}
                   </a>
                 ))}
               </div>
@@ -181,7 +180,7 @@ export default function StudentSOSModal({ isOpen, onClose }) {
               <button onClick={handleSendSOS}
                 disabled={phase==='locating'||phase==='sending'}
                 className="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white text-sm font-black transition-all shadow-lg shadow-rose-500/30 active:scale-95">
-                {phase==='sending' ? '📡 Sending...' : phase==='locating' ? '📍 Getting GPS...' : '🚨 SEND SOS NOW'}
+                {phase==='sending' ? 'ðŸ“¡ Sending...' : phase==='locating' ? 'ðŸ“ Getting GPS...' : 'ðŸš¨ SEND SOS NOW'}
               </button>
             </div>
           )}

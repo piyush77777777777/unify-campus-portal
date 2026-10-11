@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCampus } from '../../context/CampusContext';
 import { User, TrendingUp, Bell, CheckCircle2, Activity, Users, MapPin } from 'lucide-react';
-import BusTracker from '../campus/BusTracker';
+
 
 export default function ParentPortal() {
   const { gatePasses } = useCampus();
@@ -32,7 +32,7 @@ export default function ParentPortal() {
     { id: 'overview',    label: 'Overview'    },
     { id: 'fees',        label: 'Fees'        },
     { id: 'gate_passes', label: 'Gate Passes' },
-    { id: 'bus_tracker', label: '🚌 Bus Tracker' },
+    { id: 'bus_tracker', label: 'ðŸšŒ Bus Tracker' },
     { id: 'alerts',      label: 'Alerts'      }
   ];
 
@@ -46,11 +46,11 @@ export default function ParentPortal() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 text-teal-200 text-xs font-bold border border-teal-500/30 mb-3">
             <Users className="w-3.5 h-3.5" /><span>Parent / Guardian Portal</span>
           </div>
-          <h2 className="text-2xl font-black">Good Day, Mr. Ramesh Mohapatra 👨‍👦</h2>
-          <p className="text-xs text-teal-100/90 mt-1">Monitoring ward: <strong>{ward.name}</strong> • {ward.branch}</p>
+          <h2 className="text-2xl font-black">Good Day, Mr. Ramesh Mohapatra ðŸ‘¨â€ðŸ‘¦</h2>
+          <p className="text-xs text-teal-100/90 mt-1">Monitoring ward: <strong>{ward.name}</strong> â€¢ {ward.branch}</p>
           <div className="flex flex-wrap gap-4 pt-6 mt-6 border-t border-white/10">
             {[
-              { label: 'Attendance',  value: `${ward.attendance}%`, sub: 'Above 75% cutoff ✓', color: 'text-emerald-300', sc: 'text-emerald-400' },
+              { label: 'Attendance',  value: `${ward.attendance}%`, sub: 'Above 75% cutoff âœ“', color: 'text-emerald-300', sc: 'text-emerald-400' },
               { label: 'Gate Passes', value: wardPasses.length,     sub: 'This semester',       color: 'text-white',       sc: 'text-blue-300'    },
               { label: 'Fee Status',  value: 'Cleared',             sub: 'No dues pending',     color: 'text-emerald-300', sc: 'text-emerald-400' }
             ].map((k, i) => (
@@ -76,7 +76,7 @@ export default function ParentPortal() {
         ))}
       </div>
 
-      {/* ── Overview ── */}
+      {/* â”€â”€ Overview â”€â”€ */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Ward details */}
@@ -87,8 +87,8 @@ export default function ParentPortal() {
               <div>
                 <div className="font-bold text-slate-900">{ward.name}</div>
                 <div className="text-xs text-slate-500">{ward.regNo}</div>
-                <div className="text-xs text-slate-500">{ward.year} • {ward.branch}</div>
-                <div className="text-xs text-slate-500">{ward.hostel} • Room {ward.room}</div>
+                <div className="text-xs text-slate-500">{ward.year} â€¢ {ward.branch}</div>
+                <div className="text-xs text-slate-500">{ward.hostel} â€¢ Room {ward.room}</div>
               </div>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function ParentPortal() {
         </div>
       )}
 
-      {/* ── Fees ── */}
+      {/* â”€â”€ Fees â”€â”€ */}
       {activeTab === 'fees' && (
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
           <h3 className="font-bold text-slate-900">Fee & Dues Status</h3>
@@ -122,7 +122,7 @@ export default function ParentPortal() {
                 <div className="text-[11px] text-slate-500">{f.paid ? `Paid on ${f.date}` : `Due: ${f.due}`}</div>
               </div>
               <div className="text-right">
-                <div className="font-black text-slate-900">{f.amount > 0 ? `₹${f.amount.toLocaleString()}` : '₹0'}</div>
+                <div className="font-black text-slate-900">{f.amount > 0 ? `â‚¹${f.amount.toLocaleString()}` : 'â‚¹0'}</div>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${f.paid ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                   {f.paid ? 'PAID' : 'PENDING'}
                 </span>
@@ -132,7 +132,7 @@ export default function ParentPortal() {
         </div>
       )}
 
-      {/* ── Gate Passes ── */}
+      {/* â”€â”€ Gate Passes â”€â”€ */}
       {activeTab === 'gate_passes' && (
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
           <h3 className="font-bold text-slate-900">Ward's Gate Pass History</h3>
@@ -142,7 +142,7 @@ export default function ParentPortal() {
                 <div>
                   <span className="text-[10px] font-mono text-slate-400">{gp.id}</span>
                   <div className="font-bold text-slate-900 text-sm">{gp.destination}</div>
-                  <div className="text-xs text-slate-500">Out: {gp.outTime} → Return by: {gp.expectedInTime}</div>
+                  <div className="text-xs text-slate-500">Out: {gp.outTime} â†’ Return by: {gp.expectedInTime}</div>
                   {gp.approvedBy && <div className="text-[11px] text-emerald-700 mt-1">Approved by: {gp.approvedBy}</div>}
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
@@ -158,7 +158,7 @@ export default function ParentPortal() {
         </div>
       )}
 
-      {/* ── Bus Tracker ── */}
+      {/* â”€â”€ Bus Tracker â”€â”€ */}
       {activeTab === 'bus_tracker' && (
         <div className="space-y-4">
           <div className="bg-teal-50 border border-teal-200 rounded-2xl px-5 py-4 flex items-start gap-3">
@@ -170,16 +170,16 @@ export default function ParentPortal() {
               </div>
             </div>
           </div>
-          <BusTracker />
+          <div class='p-4 bg-emerald-50 rounded-2xl text-sm text-emerald-700 font-bold text-center'>Bus Tracker available in Campus section</div>
         </div>
       )}
 
-      {/* ── Alerts (read-only, no publish) ── */}
+      {/* â”€â”€ Alerts (read-only, no publish) â”€â”€ */}
       {activeTab === 'alerts' && (
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-slate-900">Campus Alerts</h3>
-            <span className="text-[10px] text-slate-400 font-semibold">Read-only — managed by administration</span>
+            <span className="text-[10px] text-slate-400 font-semibold">Read-only â€” managed by administration</span>
           </div>
           {[
             { icon: CheckCircle2, msg: 'Gate pass GP-2026-8891 approved by Chief Warden', time: 'Today 2:15 PM', type: 'success' },
