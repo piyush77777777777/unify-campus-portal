@@ -18,6 +18,7 @@ const BUILDINGS = [
     id:"blockA", name:"Academic Block A", short:"Block A",
     col:1, row:1, w:4, d:3, floors:4,
     top:"#60a5fa", east:"#1d4ed8", south:"#1e40af",
+    image:"https://images.unsplash.com/photo-1562774053-701939374585?w=400&auto=format&fit=crop&q=80",
     amenities:["Lecture Halls","CSE Labs","Faculty Cabins","Smart Boards"],
     rooms:{0:["101 - CSE Lab","102 - Lecture Hall","HOD Office"],
            1:["201 - AI Lab","202 - Networks Lab","Class"],
@@ -29,6 +30,7 @@ const BUILDINGS = [
     id:"blockB", name:"Academic Block B", short:"Block B",
     col:7.5, row:1, w:3.5, d:3, floors:3,
     top:"#a78bfa", east:"#6d28d9", south:"#5b21b6",
+    image:"https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&auto=format&fit=crop&q=80",
     amenities:["Electronics Lab","Electrical Lab","Workshop","Drawing Hall"],
     rooms:{0:["Drawing Hall","Basic Elec Lab","Workshop"],
            1:["Electronics Lab","Class","Staff Room"],
@@ -39,6 +41,7 @@ const BUILDINGS = [
     id:"library", name:"Central Library", short:"Library",
     col:12.5, row:1, w:3.5, d:2.5, floors:3,
     top:"#22d3ee", east:"#0e7490", south:"#155e75",
+    image:"https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&auto=format&fit=crop&q=80",
     amenities:["50k+ Books","Digital Section","Study Cabins","Journals"],
     rooms:{0:["Issue Counter","Digital Library","Newspapers"],
            1:["Reference Hall","Journals Section","Group Study"],
@@ -49,6 +52,7 @@ const BUILDINGS = [
     id:"admin", name:"Admin & Principal", short:"Admin",
     col:1, row:7, w:4, d:2.5, floors:2,
     top:"#f87171", east:"#b91c1c", south:"#991b1b",
+    image:"https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&auto=format&fit=crop&q=80",
     amenities:["Principal Office","Exam Cell","Accounts","Registrar"],
     rooms:{0:["Reception","Accounts","Registrar","Exam Cell"],
            1:["Principal Office","VP Office","Board Room"]},
@@ -58,6 +62,7 @@ const BUILDINGS = [
     id:"mess", name:"Mess & Dining Hall", short:"Mess",
     col:7.5, row:7, w:3.5, d:2.5, floors:1,
     top:"#fbbf24", east:"#b45309", south:"#92400e",
+    image:"https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&auto=format&fit=crop&q=80",
     amenities:["800 Capacity","Veg & Non-Veg","Canteen","Tuck Shop"],
     rooms:{0:["Main Dining Hall","Veg Counter","Non-Veg Counter","Canteen","Manager Office"]},
     desc:"Central mess hall serving 1000+ students daily."
@@ -66,6 +71,7 @@ const BUILDINGS = [
     id:"hostel", name:"Aryabhatta Hostel", short:"Hostel",
     col:12.5, row:5, w:3.5, d:5, floors:4,
     top:"#34d399", east:"#047857", south:"#065f46",
+    image:"https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&auto=format&fit=crop&q=80",
     amenities:["300 Rooms","Common Room","Laundry","24hr Water"],
     rooms:{0:["Warden Office","Visitor Room","Store Room"],
            1:["Rooms 101-130","Common Room"],
@@ -77,6 +83,7 @@ const BUILDINGS = [
     id:"sports", name:"Sports Complex", short:"Sports",
     col:1, row:10.5, w:6, d:2, floors:1,
     top:"#2dd4bf", east:"#0f766e", south:"#134e4a",
+    image:"https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=400&auto=format&fit=crop&q=80",
     amenities:["Cricket Ground","Football","Basketball","Indoor Gym"],
     rooms:{0:["Main Ground","Basketball Court","Indoor Stadium","Gym","Changing Rooms"]},
     desc:"Full sports complex with outdoor and indoor facilities."
@@ -85,6 +92,7 @@ const BUILDINGS = [
     id:"research", name:"R&I Lab", short:"R&I Lab",
     col:8.5, row:10, w:3.5, d:2.5, floors:2,
     top:"#c084fc", east:"#7e22ce", south:"#6b21a8",
+    image:"https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&auto=format&fit=crop&q=80",
     amenities:["IoT Lab","AI Studio","3D Printing","Incubation"],
     rooms:{0:["IoT Lab","Robotics Lab","3D Print Room","Workshop"],
            1:["AI Studio","Incubation Cell","Server Room"]},
@@ -469,8 +477,101 @@ export default function CampusNav3D() {
               ))}
             </div>
           </div>
+          </div>
         </div>
       </div>
+
+      {/* ── BUILDING IMAGE GALLERY ─────────────────────────────────────────── */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-black text-slate-700">📸 Campus Buildings — Photo Gallery</h3>
+          <span className="text-xs text-slate-400">{BUILDINGS.length} buildings · click to explore</span>
+        </div>
+
+        {/* Selected building big view */}
+        {selB && (
+          <div className="bg-white rounded-2xl overflow-hidden border-2 shadow-lg"
+            style={{ borderColor: selB.top }}>
+            <div className="relative h-48 overflow-hidden">
+              <img src={selB.image} alt={selB.name}
+                className="w-full h-full object-cover"
+                onError={e => { e.target.style.display="none"; }}/>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"/>
+              <div className="absolute bottom-0 left-0 p-4 text-white">
+                <div className="text-xs font-bold mb-0.5" style={{ color: selB.top }}>SELECTED BUILDING</div>
+                <h3 className="font-black text-lg">{selB.name}</h3>
+                <p className="text-xs text-white/80">{selB.floors} Floors · {selB.amenities.join(" · ")}</p>
+              </div>
+              <div className="absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-black text-white"
+                style={{ background: selB.east }}>{selB.floors}F</div>
+            </div>
+            {/* Floor plan strip */}
+            <div className="p-4 bg-slate-50 border-t border-slate-100">
+              <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Floor Plan — {selB.name}</p>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {Array.from({ length: selB.floors }, (_, i) => (
+                  <button key={i} onClick={() => setSelF(i)}
+                    className="flex-shrink-0 rounded-xl border-2 overflow-hidden transition-all"
+                    style={selF === i
+                      ? { borderColor: selB.east, boxShadow: `0 0 12px ${selB.top}88` }
+                      : { borderColor: "#e2e8f0" }}>
+                    <div className="px-4 py-2 text-center"
+                      style={{ background: selF === i ? selB.east : "#f8fafc" }}>
+                      <div className="text-[10px] font-black"
+                        style={{ color: selF === i ? "white" : "#64748b" }}>Floor {i + 1}</div>
+                    </div>
+                    <div className="p-2 min-w-[110px]">
+                      {(selB.rooms[i] || []).map((r, ri) => (
+                        <div key={ri} className="text-[10px] text-slate-600 flex items-center gap-1 py-0.5">
+                          <div className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: selB.top }}/>
+                          {r}
+                        </div>
+                      ))}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* All buildings photo grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {BUILDINGS.map(b => (
+            <button key={b.id}
+              onClick={() => { setSelB(s => s?.id === b.id ? null : b); setSelF(0); }}
+              className="rounded-xl overflow-hidden border-2 text-left transition-all hover:scale-[1.02] active:scale-95"
+              style={selB?.id === b.id
+                ? { borderColor: b.top, boxShadow: `0 0 16px ${b.top}66` }
+                : { borderColor: "#e2e8f0" }}>
+              <div className="relative h-24 overflow-hidden">
+                <img src={b.image} alt={b.name}
+                  className="w-full h-full object-cover transition-transform hover:scale-105"
+                  onError={e => {
+                    e.target.parentNode.style.background = b.east;
+                    e.target.style.display = "none";
+                  }}/>
+                <div className="absolute inset-0"
+                  style={{ background: `linear-gradient(to top, ${b.south}cc, transparent 60%)` }}/>
+                {selB?.id === b.id && (
+                  <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-white flex items-center justify-center">
+                    <div className="w-3 h-3 rounded-full" style={{ background: b.east }}/>
+                  </div>
+                )}
+              </div>
+              <div className="p-2" style={{ background: selB?.id === b.id ? b.east : "white" }}>
+                <div className="text-[11px] font-black truncate"
+                  style={{ color: selB?.id === b.id ? "white" : "#1e293b" }}>{b.short}</div>
+                <div className="text-[9px]"
+                  style={{ color: selB?.id === b.id ? "rgba(255,255,255,0.7)" : "#94a3b8" }}>
+                  {b.floors}F · {b.amenities[0]}
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 }
