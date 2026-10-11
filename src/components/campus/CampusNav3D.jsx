@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Search, Navigation, MapPin, X, ChevronRight, Camera, Layers, RotateCcw } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, Navigation, MapPin, X, ChevronRight, Layers, RotateCcw, Building2, Users, Coffee, BookOpen } from "lucide-react";
 
 const CELL = 72;
 const FH   = 38;
@@ -297,14 +297,9 @@ export default function CampusNav3D() {
   const [view,   setView]   = useState("map");
   const [tick,   setTick]   = useState(0);
 
-  // ── 2-axis orbit camera ────────────────────────────────────────────────
-  // Transform order: rotateZ(azim) THEN rotateX(elev)
-  // → azim controls horizontal orbit (around world Z/vertical axis)
-  // → elev controls tilt (how high up you look from)
-  const [elev, setElev] = useState(52);   // vertical tilt  10–85
-  const [azim, setAzim] = useState(45);   // horizontal orbit, free 360°
-  const dragging = useRef(false);
-  const last     = useRef({x:0,y:0});
+  // ── FIXED angle — no rotation, no drag ────────────────────────────────
+  const ELEV = 52;   // constant elevation
+  const AZIM = 45;   // constant azimuth
 
   // ── Staggered building reveal ──────────────────────────────────────────
   const [visibleCount, setVisibleCount] = useState(0);
@@ -315,19 +310,14 @@ export default function CampusNav3D() {
     return ()=>clearInterval(t);
   },[]);
 
-  // Reveal buildings one by one, 220ms apart, starting after 400ms
+  // Reveal buildings one by one on mount
   useEffect(()=>{
     setVisibleCount(0);
     let idx = 0;
     const scheduleNext = () => {
-      if(idx < BUILDINGS.length) {
-        idx++;
-        setVisibleCount(idx);
-        setTimeout(scheduleNext, 220);
-      }
+      if(idx < BUILDINGS.length) { idx++; setVisibleCount(idx); setTimeout(scheduleNext, 200); }
     };
-    const start = setTimeout(scheduleNext, 400);
-    return () => clearTimeout(start);
+    setTimeout(scheduleNext, 300);
   },[]);
 
   const filtered = search.length>1
@@ -342,39 +332,6 @@ export default function CampusNav3D() {
   const openB = b => { setSelB(b); setSelF(0); setView("building"); };
   const dirs  = dest ? DIRS[dest.building]||[] : [];
   const destB = dest ? BUILDINGS.find(b=>b.id===dest.building) : null;
-
-  // ── Mouse drag — true 2-axis orbit ─────────────────────────────────────
-  const onMouseDown = e => {
-    dragging.current = true;
-    last.current = {x: e.clientX, y: e.clientY};
-    e.preventDefault();
-  };
-  const onMouseMove = e => {
-    if(!dragging.current) return;
-    const dx = e.clientX - last.current.x;
-    const dy = e.clientY - last.current.y;
-    // Horizontal drag → azimuth (free 360°)
-    setAzim(a => a + dx * 0.55);
-    // Vertical drag → elevation (clamped 8–85°)
-    setElev(e => Math.max(8, Math.min(85, e - dy * 0.45)));
-    last.current = {x: e.clientX, y: e.clientY};
-  };
-  const onMouseUp = () => { dragging.current = false; };
-
-  // ── Touch drag support ──────────────────────────────────────────────────
-  const onTouchStart = e => {
-    dragging.current = true;
-    last.current = {x: e.touches[0].clientX, y: e.touches[0].clientY};
-  };
-  const onTouchMove = e => {
-    if(!dragging.current) return;
-    const dx = e.touches[0].clientX - last.current.x;
-    const dy = e.touches[0].clientY - last.current.y;
-    setAzim(a => a + dx * 0.55);
-    setElev(e => Math.max(8, Math.min(85, e - dy * 0.45)));
-    last.current = {x: e.touches[0].clientX, y: e.touches[0].clientY};
-  };
-  const onTouchEnd = () => { dragging.current = false; };
 
 
   // Building detail view
@@ -518,7 +475,7 @@ export default function CampusNav3D() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-cyan-400 font-bold bg-cyan-900/30 border border-cyan-700/40 px-2 py-0.5 rounded-full">REAL 3D</span>
-              <button onClick={()=>{setElev(52);setAzim(45);setVisibleCount(0);setTimeout(()=>{let i=0;const go=()=>{if(i<BUILDINGS.length){i++;setVisibleCount(i);setTimeout(go,220);}};go();},400);}}
+              <button onClick={()=>{ setSelB(null); setVisibleCount(0); setTimeout(()=>{let i=0;const go=()=>{if(i<BUILDINGS.length){i++;setVisibleCount(i);setTimeout(go,200);}};go();},300); }}
                 className="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors" title="Reset view">
                 <RotateCcw className="w-3.5 h-3.5 text-slate-400"/>
               </button>
@@ -536,32 +493,27 @@ export default function CampusNav3D() {
             </div>
           </div>
 
-          {/* THE REAL 3D MAP — bigger and full width */}
-          <div
-            style={{height:580, perspective:"1600px", overflow:"hidden", position:"relative",
-              userSelect:"none", cursor: "grab"}}
-            onMouseDown={onMouseDown} onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp} onMouseLeave={onMouseUp}
-            onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+          {/* THE 3D MAP — FIXED, NO ROTATION */}
+          <div style={{height:580, perspective:"1600px", overflow:"hidden", position:"relative"}}>
 
-            {/* Dark space background */}
+            {/* Dark background */}
             <div style={{
               position:"absolute",inset:0,
-              backgroundImage:"radial-gradient(ellipse at 30% 40%,#0c1a3a 0%,transparent 60%),radial-gradient(ellipse at 70% 60%,#1a0c3a 0%,transparent 60%),radial-gradient(ellipse at 50% 20%,#0a2040 0%,transparent 50%)",
+              backgroundImage:"radial-gradient(ellipse at 30% 40%,#0c1a3a 0%,transparent 60%),radial-gradient(ellipse at 70% 60%,#1a0c3a 0%,transparent 60%)",
             }}/>
 
-            {/* Drag hint */}
+            {/* Click-to-select hint */}
             <div style={{position:"absolute",bottom:8,left:"50%",transform:"translateX(-50%)",
-              fontSize:10, color:"rgba(100,130,200,0.7)", fontWeight:"bold", pointerEvents:"none",
+              fontSize:10, color:"rgba(100,130,200,0.6)", fontWeight:"bold", pointerEvents:"none",
               letterSpacing:1, zIndex:10}}>
-              ↔ DRAG TO ORBIT  ↕ TILT
+              🏛️ CLICK A BUILDING TO VIEW INFO
             </div>
 
-            {/* Scene — correct transform order: rotateZ first (azimuth), then rotateX (elevation) */}
+            {/* Scene — FIXED angle, never rotates */}
             <div style={{
               position:"absolute", top:"60%", left:"42%",
               transformStyle:"preserve-3d",
-              transform:`rotateZ(${azim}deg) rotateX(${elev}deg)`,
+              transform:`rotateZ(${AZIM}deg) rotateX(${ELEV}deg)`,
               width:0, height:0,
             }}>
               {/* Ground plane */}
@@ -589,13 +541,13 @@ export default function CampusNav3D() {
                 <div style={{position:"absolute",left:5.5*CELL,top:6*CELL+15,fontSize:8,color:"#14532d",fontWeight:"bold"}}>Campus Garden</div>
               </div>
 
-              {/* Buildings — revealed one by one with entrance animation */}
+              {/* Buildings — click to select and show info panel */}
               {BUILDINGS.map((b, idx)=>(
                 <Building3D key={b.id} b={b}
                   isSelected={selB?.id===b.id}
                   selFloor={selF} tick={tick}
                   revealed={idx < visibleCount}
-                  onClick={()=>{ if(selB?.id===b.id) openB(b); else {setSelB(b);setSelF(0);} }}/>
+                  onClick={()=>{ setSelB(s => s?.id===b.id ? null : b); setSelF(0); }}/>
               ))}
 
               {/* Main Gate */}
@@ -640,25 +592,25 @@ export default function CampusNav3D() {
             </div>
           </div>
 
-          <div className="px-4 py-3 border-t border-slate-800">
-            <div className="flex flex-wrap gap-x-3 gap-y-1.5 mb-1.5">
+          {/* Legend bar */}
+          <div className="px-4 py-2.5 border-t border-slate-800">
+            <div className="flex flex-wrap gap-x-3 gap-y-1">
               {BUILDINGS.map(b=>(
-                <button key={b.id} onClick={()=>{setSelB(b);setSelF(0);}}
-                  className="flex items-center gap-1.5 hover:opacity-70 transition-opacity">
+                <button key={b.id} onClick={()=>{ setSelB(s=>s?.id===b.id?null:b); setSelF(0); }}
+                  className={`flex items-center gap-1.5 transition-all px-2 py-1 rounded-lg ${selB?.id===b.id?'bg-slate-700':'hover:bg-slate-800'}`}>
                   <div className="w-3 h-3 rounded-sm" style={{background:b.base}}/>
-                  <span className="text-xs text-slate-400">{b.short}</span>
+                  <span className="text-xs text-slate-300 font-medium">{b.short}</span>
                 </button>
               ))}
             </div>
-            <p className="text-[10px] text-slate-600">
-              Click building to X-ray floors • Click again for photos • Drag to orbit 360° • Use floor buttons to switch levels
-            </p>
+            <p className="text-[10px] text-slate-600 mt-1">Click a building on the map or legend to view details</p>
           </div>
         </div>
 
-        {/* Bottom panels — 2 columns side by side */}
+        {/* Bottom panels — 2 columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Navigation / Destination panel */}
+
+          {/* Left — Search / Navigation */}
           <div>
           {dest && destB ? (
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
@@ -684,10 +636,6 @@ export default function CampusNav3D() {
                     <div className="text-[10px] text-slate-500">Floor</div>
                   </div>
                 </div>
-                <div className="p-2.5 bg-slate-50 rounded-xl">
-                  <div className="text-[10px] text-slate-400 font-bold mb-0.5">Room</div>
-                  <div className="text-xs font-bold text-slate-900">{dest.room}</div>
-                </div>
                 {!nav ? (
                   <button onClick={()=>{setNav(true);setStep(0);}}
                     className="w-full py-3 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg"
@@ -703,31 +651,24 @@ export default function CampusNav3D() {
                     </div>
                     <div className="text-sm font-bold text-slate-900">{dirs[step]}</div>
                     <div className="flex gap-2">
-                      {step>0 && <button onClick={()=>setStep(s=>s-1)} className="flex-1 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">&#8592; Back</button>}
+                      {step>0 && <button onClick={()=>setStep(s=>s-1)} className="flex-1 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">← Back</button>}
                       {step<dirs.length-1
-                        ? <button onClick={()=>setStep(s=>s+1)} className="flex-1 py-2 rounded-xl text-white text-xs font-bold" style={{background:destB.base}}>Next &#8594;</button>
-                        : <div className="flex-1 py-2 rounded-xl text-white text-xs font-bold text-center bg-emerald-500">&#127937; Arrived!</div>
+                        ? <button onClick={()=>setStep(s=>s+1)} className="flex-1 py-2 rounded-xl text-white text-xs font-bold" style={{background:destB.base}}>Next →</button>
+                        : <div className="flex-1 py-2 rounded-xl text-white text-xs font-bold text-center bg-emerald-500">🏁 Arrived!</div>
                       }
                     </div>
                   </div>
                 )}
-                <button onClick={()=>openB(destB)} className="w-full py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold flex items-center justify-center gap-1 hover:bg-slate-50">
-                  <Camera className="w-3.5 h-3.5"/> Floor Plans &amp; Photos
-                </button>
               </div>
             </div>
           ) : (
             <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 space-y-3">
-              <div className="text-center py-2">
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-3">
-                  <Layers className="w-7 h-7 text-blue-500"/>
-                </div>
-                <p className="text-sm font-bold text-slate-700">Real CSS 3D X-Ray Map</p>
-                <p className="text-xs text-slate-400 mt-1">Click a building to X-ray its floors</p>
+              <div className="flex items-center gap-2 mb-1">
+                <Layers className="w-4 h-4 text-blue-500"/>
+                <p className="text-sm font-bold text-slate-700">Find a Room / Location</p>
               </div>
               <div className="space-y-1.5">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Quick Access</p>
-                {DESTS.slice(0,5).map((d,i)=>(
+                {DESTS.slice(0,6).map((d,i)=>(
                   <button key={i} onClick={()=>selectDest(d)}
                     className="w-full flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-blue-50 border border-transparent hover:border-blue-200 text-left transition-all">
                     <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -735,40 +676,107 @@ export default function CampusNav3D() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-bold text-slate-800 truncate">{d.label}</div>
-                      <div className="text-[10px] text-slate-400">{d.time} &bull; {d.distance}</div>
+                      <div className="text-[10px] text-slate-400">{d.time} • {d.distance}</div>
                     </div>
-                    <span className={"text-[10px] font-bold px-1.5 py-0.5 rounded-full "+(TAGS[d.tag]||"")}>{d.tag}</span>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${TAGS[d.tag]||""}`}>{d.tag}</span>
                   </button>
                 ))}
               </div>
             </div>
           )}
-          </div>{/* end nav col */}
-
-          {/* Buildings gallery — second column */}
-          <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-200">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">All Campus Buildings</p>
-            <div className="grid grid-cols-2 gap-2">
-              {BUILDINGS.map(b=>(
-                <button key={b.id} onClick={()=>openB(b)}
-                  className="flex items-center gap-2.5 p-2.5 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-200 text-left transition-all">
-                  <div className="relative w-12 h-10 rounded-xl overflow-hidden flex-shrink-0">
-                    <img src={b.image} alt={b.name} className="w-full h-full object-cover"/>
-                    <div className="absolute bottom-0 left-0 right-0 h-1.5" style={{background:b.base}}/>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-slate-900 truncate">{b.name}</div>
-                    <div className="flex items-center gap-0.5 mt-0.5">
-                      {Array.from({length:b.floors},(_,i)=>(
-                        <div key={i} style={{width:10,height:5,borderRadius:1,background:b.base,opacity:0.3+i*0.15}}/>
-                      ))}
-                      <span className="text-[9px] text-slate-400 ml-1">{b.floors}F</span>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
           </div>
+
+          {/* Right — Building info when clicked, else all buildings grid */}
+          {selB ? (
+            <div className="bg-white rounded-3xl shadow-sm border-2 overflow-hidden animate-fade-in"
+              style={{borderColor: selB.base+"55"}}>
+              {/* Photo banner */}
+              <div className="relative h-40">
+                <img src={selB.image} alt={selB.name} className="w-full h-full object-cover"/>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"/>
+                <button onClick={()=>setSelB(null)}
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center">
+                  <X className="w-4 h-4 text-white"/>
+                </button>
+                <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-black text-white" style={{background:selB.base}}>
+                  {selB.id.toUpperCase()}
+                </div>
+                <div className="absolute bottom-3 left-3 text-white">
+                  <h3 className="font-black text-lg leading-tight">{selB.name}</h3>
+                  <p className="text-xs opacity-80">{selB.floors} Floors · Trident Academy of Technology</p>
+                </div>
+              </div>
+
+              <div className="p-4 space-y-3">
+                {/* Amenities */}
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5">Facilities</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selB.amenities.map((a,i)=>(
+                      <span key={i} className="px-2.5 py-1 rounded-full text-xs font-bold text-white"
+                        style={{background:selB.base}}>✓ {a}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Floor selector */}
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5">Floor Explorer</p>
+                  <div className="flex gap-1.5 mb-2">
+                    {Array.from({length:selB.floors},(_,i)=>(
+                      <button key={i} onClick={()=>setSelF(i)}
+                        className="flex-1 py-2 rounded-xl text-xs font-black transition-all"
+                        style={selF===i?{background:selB.base,color:"white",boxShadow:`0 4px 12px ${selB.base}55`}:{background:"#f1f5f9",color:"#475569"}}>
+                        F{i+1}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Rooms on selected floor */}
+                  <div className="bg-slate-50 rounded-2xl p-3 space-y-1.5">
+                    <p className="text-[10px] text-slate-400 font-bold">Floor {selF+1} Rooms</p>
+                    {(selB.rooms[selF]||[]).map((room,i)=>(
+                      <div key={i} className="flex items-center gap-2 text-xs text-slate-700">
+                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{background:selB.base}}/>
+                        {room}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Navigate to */}
+                <button onClick={()=>openB(selB)}
+                  className="w-full py-2.5 rounded-2xl text-white text-xs font-bold flex items-center justify-center gap-2"
+                  style={{background:selB.base}}>
+                  <ChevronRight className="w-4 h-4"/> Full Floor Plans & Details
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-200">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">All Campus Buildings</p>
+              <div className="grid grid-cols-2 gap-2">
+                {BUILDINGS.map(b=>(
+                  <button key={b.id} onClick={()=>{setSelB(b);setSelF(0);}}
+                    className="flex items-center gap-2.5 p-2.5 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-200 text-left transition-all">
+                    <div className="relative w-12 h-10 rounded-xl overflow-hidden flex-shrink-0">
+                      <img src={b.image} alt={b.name} className="w-full h-full object-cover"/>
+                      <div className="absolute bottom-0 left-0 right-0 h-1.5" style={{background:b.base}}/>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-bold text-slate-900 truncate">{b.name}</div>
+                      <div className="flex items-center gap-0.5 mt-0.5">
+                        {Array.from({length:b.floors},(_,i)=>(
+                          <div key={i} style={{width:10,height:5,borderRadius:1,background:b.base,opacity:0.3+i*0.15}}/>
+                        ))}
+                        <span className="text-[9px] text-slate-400 ml-1">{b.floors}F</span>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>{/* end 2-col grid */}
       </div>{/* end space-y-4 */}
     </div>
