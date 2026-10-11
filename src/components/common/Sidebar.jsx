@@ -22,45 +22,50 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
         {
           category: 'MY PORTAL',
           items: [
-            { id: 'dashboard',  label: 'Dashboard',       icon: LayoutDashboard },
-            { id: 'gatePass',   label: 'Gate Pass',       icon: ShieldCheck },
-            { id: 'complaints', label: 'Complaints',      icon: Wrench },
-            { id: 'documents',  label: 'Documents',       icon: FileText },
-            { id: 'mess',       label: 'Mess & Food',     icon: Utensils },
+            { id: 'dashboard',      label: 'Dashboard',         icon: LayoutDashboard },
+            { id: 'timetable',      label: 'My Timetable',      icon: BookOpen },
+            { id: 'gatePass',       label: 'Gate Pass',         icon: ShieldCheck },
+            { id: 'complaints',     label: 'Complaints',        icon: Wrench },
+            { id: 'documents',      label: 'Documents',         icon: FileText },
+            { id: 'mess',           label: 'Mess & Food',       icon: Utensils },
+            { id: 'teacherFeedback',label: 'Rate Teachers ⭐',  icon: Sparkles },
           ]
         },
         {
           category: 'CAMPUS LIFE',
           items: [
-            { id: 'calendar',   label: 'Exam Calendar',   icon: Calendar },
-            { id: 'busTracker', label: 'Live Bus Tracker',icon: Bus },
-            { id: 'notices',    label: 'Notice Board',    icon: Bell, badge: unreadCount },
-            { id: 'campusMap',  label: 'Campus Hotspot Map', icon: Building2 },
+            { id: 'campusNav',  label: '3D Campus Map 🗺',  icon: Building2 },
+            { id: 'calendar',   label: 'Exam Calendar',    icon: Calendar },
+            { id: 'busTracker', label: 'Live Bus Tracker', icon: Bus },
+            { id: 'notices',    label: 'Notice Board',     icon: Bell, badge: unreadCount },
           ]
         }
       ];
     }
     if (activeRole === 'teacher') {
       return [{ category: 'FACULTY PORTAL', items: [
-        { id: 'dashboard',   label: 'Faculty Dashboard',  icon: LayoutDashboard },
-        { id: 'notices',     label: 'Notices',            icon: Bell, badge: unreadCount },
-        { id: 'calendar',    label: 'Academic Calendar',  icon: Calendar },
-        { id: 'aiAnalytics', label: 'AI Analytics',       icon: Sparkles },
+        { id: 'dashboard',      label: 'Faculty Dashboard',  icon: LayoutDashboard },
+        { id: 'classAttendance',label: 'Take Attendance 📋', icon: Users },
+        { id: 'notices',        label: 'Notices',            icon: Bell, badge: unreadCount },
+        { id: 'calendar',       label: 'Academic Calendar',  icon: Calendar },
+        { id: 'aiAnalytics',    label: 'AI Analytics',       icon: Sparkles },
       ]}];
     }
     if (activeRole === 'warden') {
       return [{ category: 'WARDEN PORTAL', items: [
-        { id: 'admin',      label: 'Admin Dashboard',    icon: LayoutDashboard },
-        { id: 'gatePass',   label: 'Gate Pass Approvals',icon: ShieldCheck },
-        { id: 'complaints', label: 'Complaints',         icon: Wrench },
-        { id: 'notices',    label: 'Notices',            icon: Bell, badge: unreadCount },
-        { id: 'aiAnalytics',label: 'AI Analytics',       icon: Sparkles },
+        { id: 'admin',          label: 'Admin Dashboard',     icon: LayoutDashboard },
+        { id: 'gatePass',       label: 'Gate Pass Approvals', icon: ShieldCheck },
+        { id: 'disciplinary',   label: 'Disciplinary & Fines',icon: Shield },
+        { id: 'complaints',     label: 'Complaints',          icon: Wrench },
+        { id: 'notices',        label: 'Notices',             icon: Bell, badge: unreadCount },
+        { id: 'aiAnalytics',    label: 'AI Analytics',        icon: Sparkles },
       ]}];
     }
     if (activeRole === 'guard') {
       return [{ category: 'SECURITY PORTAL', items: [
-        { id: 'dashboard', label: 'Security Terminal', icon: ShieldCheck },
-        { id: 'notices',   label: 'Alerts & Notices',  icon: Bell, badge: unreadCount },
+        { id: 'dashboard',  label: 'Security Terminal', icon: ShieldCheck },
+        { id: 'campusNav',  label: '3D Campus Map',     icon: Building2 },
+        { id: 'notices',    label: 'Alerts & Notices',  icon: Bell, badge: unreadCount },
       ]}];
     }
     if (activeRole === 'messManager') {
@@ -69,22 +74,18 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
         { id: 'notices', label: 'Notices',        icon: Bell, badge: unreadCount },
       ]}];
     }
-    if (activeRole === 'teacher') {
-      return [{ category: 'FACULTY PORTAL', items: [
-        { id: 'dashboard', label: 'Faculty Dashboard', icon: LayoutDashboard },
-        { id: 'notices',   label: 'Notices',           icon: Bell, badge: unreadCount },
-      ]}];
-    }
     if (activeRole === 'parent') {
       return [{ category: 'PARENT PORTAL', items: [
         { id: 'dashboard',  label: "Ward's Overview",  icon: LayoutDashboard },
-        { id: 'busTracker', label: 'Live Bus Tracker', icon: Shield },
+        { id: 'campusNav',  label: '3D Campus Map',    icon: Building2 },
+        { id: 'busTracker', label: 'Live Bus Tracker', icon: Bus },
       ]}];
     }
     if (activeRole === 'principal') {
       return [{ category: 'PRINCIPAL PORTAL', items: [
         { id: 'dashboard',   label: 'Command Overview',  icon: LayoutDashboard },
         { id: 'admin',       label: 'Analytics',         icon: BarChart3 },
+        { id: 'disciplinary',label: 'Disciplinary Cases',icon: Shield },
         { id: 'notices',     label: 'Notices',           icon: Bell, badge: unreadCount },
         { id: 'aiAnalytics', label: 'AI Intelligence',   icon: Sparkles },
         { id: 'calendar',    label: 'Academic Calendar', icon: Calendar },
@@ -92,10 +93,11 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
     }
     // default / admin
     return [{ category: 'ADMIN', items: [
-      { id: 'admin',     label: 'Admin Dashboard', icon: LayoutDashboard },
-      { id: 'notices',   label: 'Notices', icon: Bell, badge: unreadCount },
+      { id: 'admin',   label: 'Admin Dashboard', icon: LayoutDashboard },
+      { id: 'notices', label: 'Notices',         icon: Bell, badge: unreadCount },
     ]}];
   };
+
 
   const roleLabel = {
     student: 'Student Portal',

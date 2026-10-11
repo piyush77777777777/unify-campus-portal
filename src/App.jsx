@@ -27,6 +27,11 @@ import CalendarView from './components/campus/CalendarView';
 import BusTracker from './components/campus/BusTracker';
 import CampusMap from './components/campus/CampusMap';
 import AIAnalytics from './components/analytics/AIAnalytics';
+import CampusNav3D from './components/campus/CampusNav3D';
+import SmartTimetable from './components/student/SmartTimetable';
+import DisciplinaryActions from './components/warden/DisciplinaryActions';
+import ClassAttendance from './components/teacher/ClassAttendance';
+import TeacherFeedback from './components/student/TeacherFeedback';
 
 import GatePassModal from './components/student/GatePassModal';
 import ComplaintModal from './components/student/ComplaintModal';
@@ -132,15 +137,20 @@ function MainApp() {
           </div>
         );
 
-      case 'mess':        return <MessView />;
-      case 'notices':     return <NoticeBoard />;
-      case 'admin':       return <AdminDashboard />;
-      case 'ussdDemo':    return <USSDSimulator />;
-      case 'adoptionNote':return <AdoptionRoadmap />;
-      case 'calendar':    return <CalendarView />;
-      case 'busTracker':  return <BusTracker />;
-      case 'aiAnalytics': return <AIAnalytics />;
-      default:            return <StudentDashboard onNavigateTab={setActiveTab} />;
+      case 'mess':             return <MessView />;
+      case 'notices':          return <NoticeBoard />;
+      case 'admin':            return <AdminDashboard />;
+      case 'ussdDemo':         return <USSDSimulator />;
+      case 'adoptionNote':     return <AdoptionRoadmap />;
+      case 'calendar':         return <CalendarView />;
+      case 'busTracker':       return <BusTracker />;
+      case 'aiAnalytics':      return <AIAnalytics />;
+      case 'campusNav':        return <CampusNav3D />;
+      case 'timetable':        return <SmartTimetable />;
+      case 'disciplinary':     return <DisciplinaryActions />;
+      case 'classAttendance':  return <ClassAttendance />;
+      case 'teacherFeedback':  return <TeacherFeedback />;
+      default:                 return <StudentDashboard onNavigateTab={setActiveTab} />;
     }
   };
 
