@@ -180,7 +180,7 @@ export default function CampusNav3D(){
               <Navigation className="w-5 h-5 text-white"/>
             </div>
             <div>
-              <h2 className="text-lg font-black text-white">IGIT Sarang Campus Navigator</h2>
+              <h2 className="text-lg font-black text-white">Trident Academy of Technology Campus Navigator</h2>
               <p className="text-xs text-blue-300">Interactive Map + Building Photos + Turn-by-Turn Directions</p>
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function CampusNav3D(){
           <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"/>
-              <span className="font-bold text-slate-900 text-sm">IGIT Sarang Campus — Interactive Map</span>
+              <span className="font-bold text-slate-900 text-sm">Trident Academy of Technology Campus — Interactive Map</span>
             </div>
             <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">LIVE</span>
           </div>

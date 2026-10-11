@@ -51,7 +51,7 @@ export function CampusProvider({ children }) {
     } catch { /* ignore corrupt data */ }
     return {
       name: "Piyush Kumar Dey",
-      email: "piyush@igit.ac.in",
+      email: "piyush@tat.ac.in",
       role: "student",
       provider: "Demo",
       signedInAt: new Date().toLocaleTimeString()

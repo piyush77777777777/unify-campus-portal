@@ -20,13 +20,13 @@ const ROLE_META = {
 };
 
 const DEMO_ACCOUNTS = {
-  student:     { name: 'Piyush Kumar Dey',   email: 'piyush@igit.ac.in',     code: '2201106145' },
-  teacher:     { name: 'Prof. Ananya Verma', email: 'avinash@igit.ac.in',    code: 'FAC-001'    },
-  warden:      { name: 'Dr. S. K. Nayak',    email: 'warden@igit.ac.in',     code: 'WAR-01'     },
-  guard:       { name: 'Subedar Ram Singh',  email: 'guard@igit.ac.in',      code: 'SEC-01'     },
-  messManager: { name: 'Bikram Das',          email: 'mess@igit.ac.in',       code: 'MESS-01'    },
+  student:     { name: 'Piyush Kumar Dey',   email: 'piyush@tat.ac.in',     code: '2201106145' },
+  teacher:     { name: 'Prof. Ananya Verma', email: 'avinash@tat.ac.in',    code: 'FAC-001'    },
+  warden:      { name: 'Dr. S. K. Nayak',    email: 'warden@tat.ac.in',     code: 'WAR-01'     },
+  guard:       { name: 'Subedar Ram Singh',  email: 'guard@tat.ac.in',      code: 'SEC-01'     },
+  messManager: { name: 'Bikram Das',          email: 'mess@tat.ac.in',       code: 'MESS-01'    },
   parent:      { name: 'Mr. Ramesh Dey',     email: 'parent@gmail.com',      code: '2201106145' },
-  principal:   { name: 'Prof. D. K. Mishra', email: 'principal@igit.ac.in',  code: 'PRIN-01'    }
+  principal:   { name: 'Prof. B. K. Mishra', email: 'principal@tat.ac.in',  code: 'PRIN-01'    }
 };
 
 export default function GoogleAuthModal({ isOpen: propIsOpen, onClose: propOnClose, onLogin: propOnLogin, initialRole = null }) {

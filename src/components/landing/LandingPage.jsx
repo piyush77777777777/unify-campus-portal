@@ -104,7 +104,7 @@ export default function LandingPage() {
   };
 
   const handleLogin = (role, user) => {
-    loginWithGoogle(user.email || (role + '@igit.ac.in'), role, user.name || '');
+    loginWithGoogle(user.email || (role + '@tat.ac.in'), role, user.name || '');
     setIsLandingPage(false);
     setModalOpen(false);
   };

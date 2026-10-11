@@ -1,4 +1,4 @@
-﻿// initialData.js - Smart Campus OS unified data layer
+// initialData.js - Smart Campus OS unified data layer
 
 export const initialPersonas = {
   student: {

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=400&auto=format&fit=crop&q=80" width="100%" alt="IGIT Sarang Campus"/>
+<img src="https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=400&auto=format&fit=crop&q=80" width="100%" alt="Trident Academy of Technology Campus"/>
 
 # UNIFY — Smart Campus Management Portal
 
@@ -194,13 +194,13 @@ Campus trends, heatmaps, department stats
 
 | Portal | Email | Code |
 |--------|-------|------|
-| 🎓 Student | `piyush@igit.ac.in` | `2201106145` |
-| 📚 Teacher | `avinash@igit.ac.in` | `FAC-001` |
-| 🛡 Warden | `warden@igit.ac.in` | `WAR-01` |
-| 🔒 Guard | `guard@igit.ac.in` | `SEC-01` |
-| 🍽 Mess Manager | `mess@igit.ac.in` | `MESS-01` |
+| 🎓 Student | `piyush@tat.ac.in` | `2201106145` |
+| 📚 Teacher | `avinash@tat.ac.in` | `FAC-001` |
+| 🛡 Warden | `warden@tat.ac.in` | `WAR-01` |
+| 🔒 Guard | `guard@tat.ac.in` | `SEC-01` |
+| 🍽 Mess Manager | `mess@tat.ac.in` | `MESS-01` |
 | 👨‍👦 Parent | `parent@gmail.com` | `2201106145` |
-| 🎓 Principal | `principal@igit.ac.in` | `PRIN-01` |
+| 🎓 Principal | `principal@tat.ac.in` | `PRIN-01` |
 
 ---
 
@@ -241,7 +241,7 @@ npm run dev
 **Piyush Kumar Dey**
 `Registration No: 260310533838`
 Team: **BUG FINDERS** 🐛
-Institution: **IGIT Sarang, Odisha**
+Institution: **Trident Academy of Technology, Odisha**
 
 <br/>
 
@@ -251,6 +251,6 @@ Institution: **IGIT Sarang, Odisha**
 
 <br/>
 
-<sub>Made with ❤️ for IGIT Sarang | MIT License</sub>
+<sub>Made with ❤️ for Trident Academy of Technology | MIT License</sub>
 
 </div>
