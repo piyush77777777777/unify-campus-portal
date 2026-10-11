@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=80" width="100%" style="border-radius:16px" alt="IGIT Sarang Campus"/>
+<img src="https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=400&auto=format&fit=crop&q=80" width="100%" alt="IGIT Sarang Campus"/>
 
 # UNIFY — Smart Campus Management Portal
 
@@ -10,111 +10,181 @@
 [![React](https://img.shields.io/badge/React%2018-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite%208-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![GitHub Pages](https://img.shields.io/badge/Deployed-GitHub%20Pages-222?style=for-the-badge&logo=github)](https://pages.github.com)
-[![Version](https://img.shields.io/badge/Version-3.1-22c55e?style=for-the-badge)](https://github.com/piyush77777777777/unify-campus-portal/releases)
+[![Version](https://img.shields.io/badge/Version-3.1-22c55e?style=for-the-badge)](#)
+[![License](https://img.shields.io/badge/License-MIT-f59e0b?style=for-the-badge)](#)
 
 </div>
 
 ---
 
-## 🏛️ What is UNIFY?
-
-**UNIFY** is a production-ready, role-based smart campus management system designed for IGIT Sarang. It eliminates paperwork, connects all campus stakeholders in real-time, and brings the entire campus experience into one sleek web portal.
+## 🆕 New Features — v3.0 / v3.1
 
 ---
 
-## 🖥️ Portal Previews
+### 🗺️ Feature 1 — 3D Campus Navigation
+
+<img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=400&auto=format&fit=crop&q=80" width="100%" alt="3D Campus Navigation"/>
+
+> **Like Google Maps — but built into the student portal**
+
+- Interactive SVG campus map with **7 buildings** (Academic, CSE/IT, Library, Admin, Hostel, Mess, Sports)
+- **Real building photos** + floor-by-floor photo explorer
+- **Turn-by-turn navigation** — step-by-step directions from Main Gate to any room
+- Animated route path, live pulsing location dot, compass rose, scale bar
+- Click any building → see **floor plan**, room list, facilities
 
 <table>
 <tr>
-<td width="50%">
-
-### 🎓 Student Portal
-<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format&fit=crop&q=80" width="100%" alt="Student Portal"/>
-
-Gate passes, timetable, mess menu, feedback and more
-
-</td>
-<td width="50%">
-
-### 🗺️ 3D Campus Navigator
-<img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=80" width="100%" alt="Campus Map"/>
-
-Interactive map with building photos, floor plans & navigation
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 📋 Teacher — Class Attendance
-<img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&auto=format&fit=crop&q=80" width="100%" alt="Attendance"/>
-
-Per-class P/A/L marking — no QR code needed
-
-</td>
-<td width="50%">
-
-### 🚫 Warden — Disciplinary Panel
-<img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&auto=format&fit=crop&q=80" width="100%" alt="Disciplinary"/>
-
-Issue fines, notify parents instantly, track all cases
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 📅 Smart Timetable
-<img src="https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&auto=format&fit=crop&q=80" width="100%" alt="Timetable"/>
-
-Room, floor, block & teacher — all in one view
-
-</td>
-<td width="50%">
-
-### ⭐ Teacher Feedback (75%+ gate)
-<img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&auto=format&fit=crop&q=80" width="100%" alt="Feedback"/>
-
-Anonymous 5-star ratings, locked for low attendance
-
-</td>
+<td><img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Map View"/><br/><sub><b>Interactive Campus Map</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Building Detail"/><br/><sub><b>Building Detail + Floor Plan</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1503551723145-6c040742065b?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Navigation"/><br/><sub><b>Turn-by-Turn Navigation</b></sub></td>
 </tr>
 </table>
 
 ---
 
-## ✨ All Features
+### 📅 Feature 2 — Smart Timetable System
+
+<img src="https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=1200&h=350&auto=format&fit=crop&q=80" width="100%" alt="Smart Timetable"/>
+
+> **Know exactly where your class is — room, block, floor and teacher**
+
+- Full weekly class schedule with **room number, block, floor & teacher**
+- **Live "ONGOING" class** highlighted with green pulse animation
+- **Next class alert** shown at the top with exact location
+- Day selector with **Today highlighted** in amber
+- One-tap Navigate button to go to class
 
 <table>
-<tr><th>Feature</th><th>Description</th><th>Portal</th></tr>
-<tr><td>🗺 <b>3D Campus Navigation</b></td><td>Interactive SVG map, building photos, floor plans, turn-by-turn directions</td><td>All roles</td></tr>
-<tr><td>📅 <b>Smart Timetable</b></td><td>Weekly schedule with room no, block, floor & teacher name — live class indicator</td><td>Student</td></tr>
-<tr><td>🚫 <b>Disciplinary Fines</b></td><td>Issue fines for misconduct, auto parent notification via SMS+Email</td><td>Warden</td></tr>
-<tr><td>📋 <b>Per-Class Attendance</b></td><td>Mark P/A/L per student per class — no QR code required</td><td>Teacher</td></tr>
-<tr><td>⭐ <b>Teacher Feedback</b></td><td>5-criteria anonymous ratings, gated at 75% attendance minimum</td><td>Student</td></tr>
-<tr><td>🎫 <b>Gate Pass System</b></td><td>Student requests, warden approves, guard verifies, parent gets notified</td><td>All</td></tr>
-<tr><td>📢 <b>Notice Board</b></td><td>Role-based notices with priority levels and acknowledgement tracking</td><td>All</td></tr>
-<tr><td>🍽 <b>Mess Management</b></td><td>Today's menu, weekly reservations, mess manager dashboard</td><td>Student, Mess</td></tr>
-<tr><td>🚌 <b>Bus Tracker</b></td><td>Live route visualization, ETA countdown, occupancy display</td><td>All</td></tr>
-<tr><td>🤖 <b>AI Analytics</b></td><td>Campus-wide insights, complaint heatmaps, department stats</td><td>Principal</td></tr>
-<tr><td>🔒 <b>Multi-Role Auth</b></td><td>7 portals with email-locked roles and persistent sessions</td><td>All</td></tr>
+<tr>
+<td><img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Weekly Schedule"/><br/><sub><b>Weekly Schedule View</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b6f6b?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Class Detail"/><br/><sub><b>Class Info — Room, Floor, Block</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Lab Class"/><br/><sub><b>Theory & Lab Distinction</b></sub></td>
+</tr>
 </table>
 
 ---
 
-## 🏛️ Campus Map — Buildings
+### 🚫 Feature 3 — Disciplinary Actions & Fines
+
+<img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&h=350&auto=format&fit=crop&q=80" width="100%" alt="Disciplinary System"/>
+
+> **Warden issues fines — parents are notified immediately**
+
+- Issue fines for: **drinking, smoking, ragging, gate pass violation, property damage** and more
+- **Auto-notifies parents** via SMS + Email the moment a fine is issued
+- **Severity levels**: CRITICAL / HIGH / MEDIUM / LOW with color coding
+- Fine override option — warden can customize amount
+- Full timestamped records of all disciplinary cases
 
 <table>
 <tr>
-<td align="center"><img src="https://images.unsplash.com/photo-1562774053-701939374585?w=200&h=120&auto=format&fit=crop&q=80" width="180"/><br/><b>Academic Block A</b><br/>4 Floors • CSE/IT/ECE</td>
-<td align="center"><img src="https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?w=200&h=120&auto=format&fit=crop&q=80" width="180"/><br/><b>CSE & IT Block B</b><br/>4 Floors • Labs & Research</td>
-<td align="center"><img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=120&auto=format&fit=crop&q=80" width="180"/><br/><b>Central Library</b><br/>3 Floors • 50k+ Books</td>
+<td><img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Issue Fine"/><br/><sub><b>Issue Fine Form (Warden)</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1551836022-4c4c79ecde51?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Parent Notification"/><br/><sub><b>Instant Parent Notification</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Case Records"/><br/><sub><b>Disciplinary Case Records</b></sub></td>
+</tr>
+</table>
+
+---
+
+### 📋 Feature 4 — Per-Class Attendance (No QR Code)
+
+<img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&h=350&auto=format&fit=crop&q=80" width="100%" alt="Class Attendance"/>
+
+> **Teacher marks attendance manually — no QR code, no scanning, no app install**
+
+- Teacher selects a class session → full **roll call appears**
+- Mark each student as **Present (P) / Absent (A) / Late (L)**
+- **Mark All Present / Absent** buttons for speed
+- Live attendance % per student with **below-75% warning** shown in red
+- Progress bar shows how many students marked vs pending
+
+<table>
+<tr>
+<td><img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Session Select"/><br/><sub><b>Select Class Session</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Roll Call"/><br/><sub><b>Roll Call — P / A / L Buttons</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Attendance %"/><br/><sub><b>Live % — Below 75% Alert</b></sub></td>
+</tr>
+</table>
+
+---
+
+### ⭐ Feature 5 — Teacher Feedback System (75%+ Gate)
+
+<img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=350&auto=format&fit=crop&q=80" width="100%" alt="Teacher Feedback"/>
+
+> **Only students with 75%+ attendance can give feedback — ensuring quality reviews**
+
+- Rate teachers on **5 criteria**: Teaching Quality, Punctuality, Knowledge, Support, Material
+- **Anonymous submission** option
+- Students below 75% see a **LOCKED screen** with current attendance shown
+- Average star ratings visible on teacher cards
+- Department can review aggregated scores
+
+<table>
+<tr>
+<td><img src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Eligible"/><br/><sub><b>75%+ Eligible — Teacher List</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1434626881859-194d67b2b86f?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Star Rating"/><br/><sub><b>5-Star Rating — 5 Criteria</b></sub></td>
+<td><img src="https://images.unsplash.com/photo-1580894894513-541e068a3e2b?w=400&h=220&auto=format&fit=crop&q=80" width="100%" alt="Locked"/><br/><sub><b>Locked for Below 75% Students</b></sub></td>
+</tr>
+</table>
+
+---
+
+## 🏛️ Existing Core Features
+
+<table>
+<tr>
+<td width="33%">
+
+### 🎫 Gate Pass System
+<img src="https://images.unsplash.com/photo-1568667256549-094345857637?w=400&h=180&auto=format&fit=crop&q=80" width="100%"/>
+
+Student → Warden → Guard → Parent notification chain
+
+</td>
+<td width="33%">
+
+### 🍽️ Mess Management
+<img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&h=180&auto=format&fit=crop&q=80" width="100%"/>
+
+Today's menu, weekly reservations, mess dashboard
+
+</td>
+<td width="33%">
+
+### 🚌 Live Bus Tracker
+<img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=180&auto=format&fit=crop&q=80" width="100%"/>
+
+3 routes, live ETA, occupancy percentage
+
+</td>
 </tr>
 <tr>
-<td align="center"><img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=200&h=120&auto=format&fit=crop&q=80" width="180"/><br/><b>Aryabhatta Hostel</b><br/>5 Floors • 430 Rooms</td>
-<td align="center"><img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=200&h=120&auto=format&fit=crop&q=80" width="180"/><br/><b>Annapurna Mess</b><br/>440 Seats • 3 Meals/Day</td>
-<td align="center"><img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=200&h=120&auto=format&fit=crop&q=80" width="180"/><br/><b>Sports Complex</b><br/>2 Floors • Gym + Courts</td>
+<td width="33%">
+
+### 📢 Notice Board
+<img src="https://images.unsplash.com/photo-1586282391129-76a6df230234?w=400&h=180&auto=format&fit=crop&q=80" width="100%"/>
+
+Role-based publishing with priority levels
+
+</td>
+<td width="33%">
+
+### 🤖 AI Analytics
+<img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=180&auto=format&fit=crop&q=80" width="100%"/>
+
+Campus trends, heatmaps, department stats
+
+</td>
+<td width="33%">
+
+### 🔒 Multi-Role Auth
+<img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=180&auto=format&fit=crop&q=80" width="100%"/>
+
+7 portals — student, teacher, warden, guard, mess, parent, principal
+
+</td>
 </tr>
 </table>
 
@@ -143,7 +213,7 @@ Anonymous 5-star ratings, locked for low attendance
 | Frontend | React 18 + Vite 8 |
 | Styling | TailwindCSS 3 |
 | Icons | Lucide React |
-| Maps | Custom SVG (no API key) |
+| Maps | Custom SVG (zero API cost) |
 | State | React Context API |
 | Storage | localStorage + Supabase/Firebase ready |
 | Deploy | GitHub Pages + GitHub Actions CI/CD |
@@ -159,25 +229,7 @@ git clone https://github.com/piyush77777777777/unify-campus-portal.git
 cd unify-campus-portal
 npm install
 npm run dev
-# Open http://localhost:5173/unify-campus-portal/
-```
-
----
-
-## 📁 Project Structure
-
-```
-src/
-├── components/
-│   ├── campus/          # CampusNav3D, BusTracker, CalendarView
-│   ├── student/         # Dashboard, GatePass, SmartTimetable, TeacherFeedback
-│   ├── teacher/         # TeacherDashboard, ClassAttendance
-│   ├── warden/          # DisciplinaryActions
-│   ├── parent/          # ParentPortal
-│   ├── principal/       # PrincipalPortal
-│   └── common/          # Sidebar, Navbar, TopHeader
-├── context/             # CampusContext (main state hub)
-└── data/                # initialData.js (all demo data)
+# Opens at http://localhost:5173/unify-campus-portal/
 ```
 
 ---
@@ -186,11 +238,10 @@ src/
 
 ## 👨‍💻 Developer
 
-<img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&auto=format&fit=crop&q=80" width="80" style="border-radius:50%"/>
-
 **Piyush Kumar Dey**
 `Registration No: 260310533838`
 Team: **BUG FINDERS** 🐛
+Institution: **IGIT Sarang, Odisha**
 
 <br/>
 
@@ -198,10 +249,8 @@ Team: **BUG FINDERS** 🐛
 
 [![GitHub stars](https://img.shields.io/github/stars/piyush77777777777/unify-campus-portal?style=social)](https://github.com/piyush77777777777/unify-campus-portal/stargazers)
 
-</div>
+<br/>
 
----
-
-<div align="center">
 <sub>Made with ❤️ for IGIT Sarang | MIT License</sub>
+
 </div>
