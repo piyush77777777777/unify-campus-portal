@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Search, MapPin, X, Navigation, Layers } from "lucide-react";
 
+// SVG scanline pattern id referenced in defs below
+const SCAN_ID = "scanlines";
+
 // ── Isometric projection ────────────────────────────────────────────────────
 const S = 20; // scale
 const iso = (wx, wy, wz = 0) => [
@@ -121,34 +124,43 @@ function IsoBuilding({ b, isSelected, onClick }) {
 
   return (
     <g onClick={onClick} style={{ cursor: "pointer" }}>
+      {/* Glow on select */}
       {isSelected && (
         <polygon points={topFace} fill={b.top}
-          style={{ filter: `drop-shadow(0 0 8px ${b.top})` }} opacity="0.4" />
+          style={{ filter: `drop-shadow(0 0 10px ${b.top})` }} opacity="0.5" />
       )}
-      {/* East wall */}
-      <polygon points={eastFace}
-        fill={isSelected ? b.east : b.east} opacity={isSelected ? 1 : 0.9}
-        stroke={isSelected ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.2)"} strokeWidth="0.3" />
-      {/* South wall */}
-      <polygon points={southFace}
-        fill={isSelected ? b.south : b.south} opacity={isSelected ? 1 : 0.9}
-        stroke={isSelected ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.2)"} strokeWidth="0.3" />
-      {/* Floor lines on south */}
+
+      {/* East wall — semi-transparent */}
+      <polygon points={eastFace} fill={b.east} opacity="0.55"
+        stroke={isSelected ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.2)"} strokeWidth="0.4" />
+      {/* East wall scanlines */}
+      <polygon points={eastFace} fill="url(#scanlines)" opacity="0.35" />
+
+      {/* South wall — semi-transparent */}
+      <polygon points={southFace} fill={b.south} opacity="0.55"
+        stroke={isSelected ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.2)"} strokeWidth="0.4" />
+      {/* South wall scanlines */}
+      <polygon points={southFace} fill="url(#scanlines)" opacity="0.35" />
+
+      {/* Floor divider lines */}
       {southLines.map((pts, i) => (
-        <polyline key={i} points={pts} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="0.4" />
+        <polyline key={i} points={pts} fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="0.5" />
       ))}
-      {/* Roof */}
-      <polygon points={topFace}
-        fill={isSelected ? "white" : b.top} opacity={isSelected ? 0.95 : 0.92}
-        stroke={isSelected ? "white" : "rgba(255,255,255,0.3)"} strokeWidth={isSelected ? 0.6 : 0.2} />
+
+      {/* Roof — semi-transparent */}
+      <polygon points={topFace} fill={isSelected ? "white" : b.top} opacity={isSelected ? 0.75 : 0.6}
+        stroke={isSelected ? "white" : "rgba(255,255,255,0.5)"} strokeWidth={isSelected ? 0.7 : 0.3} />
+      {/* Roof scanlines */}
+      <polygon points={topFace} fill="url(#scanlines)" opacity="0.2" />
+
       {/* Label */}
       <text x={lx} y={ly} textAnchor="middle" fontSize="9" fontWeight="bold"
-        fill={isSelected ? b.east : "#fff"}
-        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.9))", pointerEvents: "none" }}>
+        fill={isSelected ? b.top : "#fff"}
+        style={{ filter: "drop-shadow(0 1px 4px rgba(0,0,0,1))", pointerEvents: "none" }}>
         {b.short}
       </text>
       <text x={lx} y={ly + 10} textAnchor="middle" fontSize="7"
-        fill="rgba(255,255,255,0.7)" style={{ pointerEvents: "none" }}>
+        fill="rgba(255,255,255,0.8)" style={{ pointerEvents: "none" }}>
         {b.floors}F
       </text>
     </g>
@@ -250,6 +262,11 @@ export default function CampusNav3D() {
                 <stop offset="0%" stopColor="#0c1a3a" />
                 <stop offset="100%" stopColor="#050a14" />
               </radialGradient>
+              {/* Scanline pattern — horizontal lines for X-ray glass effect */}
+              <pattern id="scanlines" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                <line x1="0" y1="0" x2="4" y2="0" stroke="rgba(255,255,255,0.18)" strokeWidth="1"/>
+                <line x1="0" y1="2" x2="4" y2="2" stroke="rgba(0,20,60,0.25)" strokeWidth="1"/>
+              </pattern>
             </defs>
             <rect x="-240" y="-100" width="520" height="430" fill="url(#bgGrad)" />
 
