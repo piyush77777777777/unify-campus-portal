@@ -15,6 +15,38 @@
 
 </div>
 
+
+---
+
+## 🎨 Color Grading System — v6.0
+
+<div align="center">
+<img src="public/images/color_grading_ui.jpg" width="100%" alt="UNIFY Color Grading UI"/>
+</div>
+
+> **Role-based vivid gradients** — Every portal has its own color identity. Header, sidebar, active nav items, stat cards and background all shift to match the logged-in role.
+
+| Role | Header Color | Sidebar Color |
+|------|-------------|---------------|
+| 🎓 Student | Blue → Cyan gradient | Navy → Royal Blue |
+| 📚 Teacher | Dark → Violet | Dark → Purple |
+| 🏠 Warden | Dark → Crimson | Dark → Rose Red |
+| 🔒 Guard | Dark → Forest Green | Dark → Emerald |
+| 🍽️ Mess Manager | Dark → Orange | Dark → Burnt Orange |
+| 👨‍👩‍👦 Parent | Dark → Teal | Dark → Teal-Cyan |
+| 🎓 Principal | Dark → Stone Grey | Dark → Warm Grey |
+
+---
+
+## 🗺️ Real 3D X-Ray Campus Map — Full Width
+
+<div align="center">
+<img src="public/images/3d_xray_map.jpg" width="100%" alt="TAT Campus 3D X-Ray Map"/>
+</div>
+
+> **CSS 3D** — Full-width 580px map with larger buildings (72px grid cells). Transparent X-ray walls, glowing floor slabs, drag-to-orbit 360°, building names on rooftops and floating badges.
+
+---
 ---
 
 
