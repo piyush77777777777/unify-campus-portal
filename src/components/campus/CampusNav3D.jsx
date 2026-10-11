@@ -88,14 +88,16 @@ function Building3D({ b, isSelected, selFloor, onClick, tick, revealed }) {
 
   const scanLine = `repeating-linear-gradient(0deg,transparent,transparent 5px,${base}22 5px,${base}22 6px)`;
 
+  const groundOffX = -(17*CELL)/2;
+  const groundOffY = -(13*CELL)/2;
+
   return (
     <div onClick={onClick} style={{
-      position:"absolute", left:L, top:T, width:W, height:D,
+      position:"absolute", left: groundOffX + L, top: groundOffY + T, width:W, height:D,
       transformStyle:"preserve-3d", cursor:"pointer",
-      /* Entrance animation: rise from underground when revealed */
       opacity: revealed ? 1 : 0,
-      transform: revealed ? "translateZ(0px)" : "translateZ(-420px)",
-      transition: "opacity 0.6s ease, transform 0.7s cubic-bezier(0.34,1.56,0.64,1)",
+      transform: revealed ? "translateZ(0px)" : "translateZ(-300px)",
+      transition: "opacity 0.5s ease, transform 0.6s cubic-bezier(0.34,1.56,0.64,1)",
     }}>
       {/* Ground footprint */}
       <div style={{
@@ -509,17 +511,17 @@ export default function CampusNav3D() {
               🏛️ CLICK A BUILDING TO VIEW INFO
             </div>
 
-            {/* Scene — FIXED angle, never rotates */}
+            {/* Scene — FIXED angle, centered in viewport */}
             <div style={{
-              position:"absolute", top:"22%", left:"48%",
+              position:"absolute", top:"5%", left:"50%",
               transformStyle:"preserve-3d",
               transform:`rotateZ(${AZIM}deg) rotateX(${ELEV}deg)`,
               width:0, height:0,
             }}>
-              {/* Ground plane */}
+              {/* Ground plane — centered on anchor (-halfW, -halfH) */}
               <div style={{
                 position:"absolute",
-                left:-120, top:-100,
+                left: -(17*CELL)/2, top: -(13*CELL)/2,
                 width: 17*CELL, height:13*CELL,
                 transformStyle:"preserve-3d",
                 background:"#0a1628",
@@ -552,21 +554,16 @@ export default function CampusNav3D() {
 
               {/* Main Gate */}
               <div style={{
-                position:"absolute", left:2*CELL-20, top:9*CELL-10,
+                position:"absolute", left: -(17*CELL)/2 + 2*CELL-20, top: -(13*CELL)/2 + 9*CELL-10,
                 width:40, height:20,
-                background:"#1d4ed8",
-                border:"2px solid #3b82f6",
-                borderRadius:4,
+                background:"#1d4ed8", border:"2px solid #3b82f6", borderRadius:4,
                 display:"flex", alignItems:"center", justifyContent:"center",
                 color:"white", fontSize:8, fontWeight:900, letterSpacing:1,
-                transformStyle:"preserve-3d",
-                boxShadow:`0 0 20px #3b82f688`,
-              }}>
-                GATE
-              </div>
+                transformStyle:"preserve-3d", boxShadow:"0 0 20px #3b82f688",
+              }}>GATE</div>
               {/* Gate glow beacon */}
               <div style={{
-                position:"absolute", left:2*CELL-8, top:9*CELL-8,
+                position:"absolute", left: -(17*CELL)/2 + 2*CELL-8, top: -(13*CELL)/2 + 9*CELL-8,
                 width:16, height:16,
                 transform:`translateZ(${4+(tick%4)*2}px)`,
                 background:"#3b82f6",
