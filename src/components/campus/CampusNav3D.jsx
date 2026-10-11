@@ -1,179 +1,228 @@
 import React, { useState } from "react";
-import { Search, MapPin, X, ChevronRight, Navigation, Layers } from "lucide-react";
+import { Search, MapPin, X, Navigation, Layers } from "lucide-react";
 
-// ── Campus buildings data ────────────────────────────────────────────────────
+// ── Isometric projection ────────────────────────────────────────────────────
+const S = 20; // scale
+const iso = (wx, wy, wz = 0) => [
+  (wx - wy) * S * 0.866,
+  (wx + wy) * S * 0.5 - wz * S
+];
+const pt = (wx, wy, wz = 0) => iso(wx, wy, wz).join(",");
+
+// ── Campus buildings in grid coords (17 col × 13 row ground) ────────────────
 const BUILDINGS = [
   {
     id:"blockA", name:"Academic Block A", short:"Block A",
-    color:"#2563eb", bg:"#dbeafe", border:"#93c5fd",
-    // SVG coords (% of viewBox 0 0 100 100)
-    x:10, y:8, w:28, h:18, floors:4,
-    amenities:["Lecture Halls","Seminar Rooms","Faculty Cabins","Smart Boards"],
-    rooms:{ 0:["101 - CSE Lab","102 - Lecture Hall","103 - HOD Office"],
-            1:["201 - AI Lab","202 - Networks Lab","203 - Class"],
-            2:["301 - DS Lab","302 - Class","303 - Staff Room"],
-            3:["401 - Project Lab","402 - Seminar Hall"] },
-    desc:"Main academic building with 4 floors, 40+ classrooms and labs."
+    col:1, row:1, w:4, d:3, floors:4,
+    top:"#60a5fa", east:"#1d4ed8", south:"#1e40af",
+    amenities:["Lecture Halls","CSE Labs","Faculty Cabins","Smart Boards"],
+    rooms:{0:["101 - CSE Lab","102 - Lecture Hall","HOD Office"],
+           1:["201 - AI Lab","202 - Networks Lab","Class"],
+           2:["301 - DS Lab","302 - Seminar Hall"],
+           3:["401 - Project Lab","Research Room"]},
+    desc:"Main academic building, 4 floors, 40+ classrooms and labs."
   },
   {
     id:"blockB", name:"Academic Block B", short:"Block B",
-    color:"#7c3aed", bg:"#ede9fe", border:"#c4b5fd",
-    x:44, y:8, w:24, h:18, floors:3,
-    amenities:["Electronics Lab","Electrical Lab","Workshops","Drawing Hall"],
-    rooms:{ 0:["101 - Drawing Hall","102 - Basic Elec Lab","103 - Workshop"],
-            1:["201 - Electronics Lab","202 - Class","203 - Staff Room"],
-            2:["301 - Project Room","302 - Class"] },
+    col:7.5, row:1, w:3.5, d:3, floors:3,
+    top:"#a78bfa", east:"#6d28d9", south:"#5b21b6",
+    amenities:["Electronics Lab","Electrical Lab","Workshop","Drawing Hall"],
+    rooms:{0:["Drawing Hall","Basic Elec Lab","Workshop"],
+           1:["Electronics Lab","Class","Staff Room"],
+           2:["Project Room","Class"]},
     desc:"Engineering labs block with workshops and electrical labs."
   },
   {
     id:"library", name:"Central Library", short:"Library",
-    color:"#0891b2", bg:"#cffafe", border:"#67e8f9",
-    x:74, y:8, w:22, h:16, floors:3,
+    col:12.5, row:1, w:3.5, d:2.5, floors:3,
+    top:"#22d3ee", east:"#0e7490", south:"#155e75",
     amenities:["50k+ Books","Digital Section","Study Cabins","Journals"],
-    rooms:{ 0:["Issue Counter","Digital Library","Newspaper Hall"],
-            1:["Reference Hall","Journals Section","Group Study"],
-            2:["Rare Books","Research Cabins","Silent Zone"] },
-    desc:"Central library with 50,000+ books, digital resources and study zones."
+    rooms:{0:["Issue Counter","Digital Library","Newspapers"],
+           1:["Reference Hall","Journals Section","Group Study"],
+           2:["Rare Books","Silent Zone","Research Cabins"]},
+    desc:"Central library with 50,000+ books and digital resources."
   },
   {
-    id:"hostel", name:"Aryabhatta Hostel", short:"Hostel",
-    color:"#059669", bg:"#d1fae5", border:"#6ee7b7",
-    x:74, y:34, w:22, h:26, floors:4,
-    amenities:["300 Rooms","Common Room","Laundry","24hr Water"],
-    rooms:{ 0:["Warden Office","Visitor Room","Store Room"],
-            1:["101-130 Single Rooms","Common Room"],
-            2:["201-230 Double Rooms","Study Room"],
-            3:["301-330 Rooms","Gym Room"] },
-    desc:"Main boys hostel with 300+ rooms, common room and all facilities."
+    id:"admin", name:"Admin & Principal", short:"Admin",
+    col:1, row:7, w:4, d:2.5, floors:2,
+    top:"#f87171", east:"#b91c1c", south:"#991b1b",
+    amenities:["Principal Office","Exam Cell","Accounts","Registrar"],
+    rooms:{0:["Reception","Accounts","Registrar","Exam Cell"],
+           1:["Principal Office","VP Office","Board Room"]},
+    desc:"Administrative hub — principal office, exam cell, student services."
   },
   {
     id:"mess", name:"Mess & Dining Hall", short:"Mess",
-    color:"#d97706", bg:"#fef3c7", border:"#fcd34d",
-    x:44, y:36, w:24, h:14, floors:1,
+    col:7.5, row:7, w:3.5, d:2.5, floors:1,
+    top:"#fbbf24", east:"#b45309", south:"#92400e",
     amenities:["800 Capacity","Veg & Non-Veg","Canteen","Tuck Shop"],
-    rooms:{ 0:["Main Dining Hall","Veg Counter","Non-Veg Counter","Canteen","Manager Office"] },
-    desc:"Central mess hall serving 1000+ students daily with multiple counters."
+    rooms:{0:["Main Dining Hall","Veg Counter","Non-Veg Counter","Canteen","Manager Office"]},
+    desc:"Central mess hall serving 1000+ students daily."
   },
   {
-    id:"admin", name:"Admin & Principal Block", short:"Admin",
-    color:"#dc2626", bg:"#fee2e2", border:"#fca5a5",
-    x:10, y:36, w:28, h:14, floors:2,
-    amenities:["Principal Office","Exam Cell","Accounts","Registrar"],
-    rooms:{ 0:["Reception","Accounts Section","Registrar Office","Exam Cell"],
-            1:["Principal Office","Vice Principal","Board Room","HR Office"] },
-    desc:"Administrative hub with principal office, exam cell, and student services."
+    id:"hostel", name:"Aryabhatta Hostel", short:"Hostel",
+    col:12.5, row:5, w:3.5, d:5, floors:4,
+    top:"#34d399", east:"#047857", south:"#065f46",
+    amenities:["300 Rooms","Common Room","Laundry","24hr Water"],
+    rooms:{0:["Warden Office","Visitor Room","Store Room"],
+           1:["Rooms 101-130","Common Room"],
+           2:["Rooms 201-230","Study Room"],
+           3:["Rooms 301-330","Gym"]},
+    desc:"Main boys hostel with 300+ rooms and all facilities."
   },
   {
     id:"sports", name:"Sports Complex", short:"Sports",
-    color:"#0d9488", bg:"#ccfbf1", border:"#5eead4",
-    x:10, y:60, w:36, h:20, floors:1,
-    amenities:["Cricket Ground","Football Field","Basketball","Indoor Gym"],
-    rooms:{ 0:["Main Ground","Basketball Court","Indoor Stadium","Gym","Changing Rooms"] },
-    desc:"Full sports complex with outdoor and indoor facilities for all sports."
+    col:1, row:10.5, w:6, d:2, floors:1,
+    top:"#2dd4bf", east:"#0f766e", south:"#134e4a",
+    amenities:["Cricket Ground","Football","Basketball","Indoor Gym"],
+    rooms:{0:["Main Ground","Basketball Court","Indoor Stadium","Gym","Changing Rooms"]},
+    desc:"Full sports complex with outdoor and indoor facilities."
   },
   {
-    id:"research", name:"Research & Innovation Lab", short:"R&I Lab",
-    color:"#9333ea", bg:"#f3e8ff", border:"#d8b4fe",
-    x:52, y:60, w:20, h:20, floors:2,
+    id:"research", name:"R&I Lab", short:"R&I Lab",
+    col:8.5, row:10, w:3.5, d:2.5, floors:2,
+    top:"#c084fc", east:"#7e22ce", south:"#6b21a8",
     amenities:["IoT Lab","AI Studio","3D Printing","Incubation"],
-    rooms:{ 0:["IoT Lab","Robotics Lab","3D Print Room","Workshop"],
-            1:["AI & ML Studio","Incubation Cell","Meeting Room","Server Room"] },
-    desc:"State-of-the-art research lab with IoT, AI studio and incubation centre."
+    rooms:{0:["IoT Lab","Robotics Lab","3D Print Room","Workshop"],
+           1:["AI Studio","Incubation Cell","Server Room"]},
+    desc:"State-of-the-art research lab with IoT, AI studio and incubation."
   },
 ];
 
-const PATHS = [
-  // Main horizontal road
-  { x:0, y:30, w:100, h:4, color:"#1e293b", dash:false },
-  // Main vertical road
-  { x:40, y:0, w:4, h:100, color:"#1e293b", dash:false },
-  // Secondary horizontal
-  { x:0, y:56, w:100, h:3, color:"#0f172a", dash:true },
-  // Secondary vertical
-  { x:70, y:0, w:3, h:100, color:"#0f172a", dash:true },
+const DESTS = [
+  { label:"CSE Lab 201",       building:"blockA",  floor:1, time:"3 min", distance:"180m", tag:"Lab" },
+  { label:"AI & ML Studio",    building:"research", floor:1, time:"5 min", distance:"320m", tag:"Lab" },
+  { label:"Central Library",   building:"library",  floor:0, time:"4 min", distance:"260m", tag:"Library" },
+  { label:"Mess Hall",         building:"mess",     floor:0, time:"2 min", distance:"150m", tag:"Food" },
+  { label:"Principal Office",  building:"admin",    floor:1, time:"3 min", distance:"200m", tag:"Admin" },
+  { label:"Electronics Lab",   building:"blockB",   floor:1, time:"4 min", distance:"250m", tag:"Lab" },
 ];
-
 const TAGS = {
-  Class:"bg-blue-100 text-blue-700", Lab:"bg-purple-100 text-purple-700",
-  Admin:"bg-amber-100 text-amber-700", Library:"bg-indigo-100 text-indigo-700",
-  Hall:"bg-cyan-100 text-cyan-700", Food:"bg-orange-100 text-orange-700",
+  Lab:"bg-purple-100 text-purple-700", Library:"bg-indigo-100 text-indigo-700",
+  Admin:"bg-amber-100 text-amber-700", Food:"bg-orange-100 text-orange-700",
 };
 
-const DESTS = [
-  { label:"CSE Lab 201",      building:"blockA",  floor:1, time:"3 min",  distance:"180m", tag:"Lab" },
-  { label:"HOD Office CSE",   building:"blockA",  floor:0, time:"2 min",  distance:"120m", tag:"Admin" },
-  { label:"AI & ML Studio",   building:"research",floor:1, time:"5 min",  distance:"320m", tag:"Lab" },
-  { label:"Central Library",  building:"library", floor:0, time:"4 min",  distance:"260m", tag:"Library" },
-  { label:"Mess Hall",        building:"mess",    floor:0, time:"2 min",  distance:"150m", tag:"Food" },
-  { label:"Principal Office", building:"admin",   floor:1, time:"3 min",  distance:"200m", tag:"Admin" },
-  { label:"Seminar Hall 302", building:"blockA",  floor:2, time:"4 min",  distance:"230m", tag:"Hall" },
-  { label:"Electronics Lab",  building:"blockB",  floor:1, time:"4 min",  distance:"250m", tag:"Lab" },
-];
+// ── Isometric Building component ────────────────────────────────────────────
+function IsoBuilding({ b, isSelected, onClick }) {
+  const { col, row, w, d, floors } = b;
+  const h = floors * 1.4;
 
+  const topFace  = [pt(col,row,h), pt(col+w,row,h), pt(col+w,row+d,h), pt(col,row+d,h)].join(" ");
+  const eastFace = [pt(col+w,row,0), pt(col+w,row+d,0), pt(col+w,row+d,h), pt(col+w,row,h)].join(" ");
+  const southFace= [pt(col,row+d,0), pt(col+w,row+d,0), pt(col+w,row+d,h), pt(col,row+d,h)].join(" ");
+
+  // Floor lines on south face
+  const southLines = Array.from({length: floors - 1}, (_, i) => {
+    const fh = (h / floors) * (i + 1);
+    return [pt(col, row+d, fh), pt(col+w, row+d, fh)].join(" ");
+  });
+
+  const [lx, ly] = iso(col + w / 2, row + d / 2, h + 0.5);
+
+  return (
+    <g onClick={onClick} style={{ cursor: "pointer" }}>
+      {isSelected && (
+        <polygon points={topFace} fill={b.top}
+          style={{ filter: `drop-shadow(0 0 8px ${b.top})` }} opacity="0.4" />
+      )}
+      {/* East wall */}
+      <polygon points={eastFace}
+        fill={isSelected ? b.east : b.east} opacity={isSelected ? 1 : 0.9}
+        stroke={isSelected ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.2)"} strokeWidth="0.3" />
+      {/* South wall */}
+      <polygon points={southFace}
+        fill={isSelected ? b.south : b.south} opacity={isSelected ? 1 : 0.9}
+        stroke={isSelected ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.2)"} strokeWidth="0.3" />
+      {/* Floor lines on south */}
+      {southLines.map((pts, i) => (
+        <polyline key={i} points={pts} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="0.4" />
+      ))}
+      {/* Roof */}
+      <polygon points={topFace}
+        fill={isSelected ? "white" : b.top} opacity={isSelected ? 0.95 : 0.92}
+        stroke={isSelected ? "white" : "rgba(255,255,255,0.3)"} strokeWidth={isSelected ? 0.6 : 0.2} />
+      {/* Label */}
+      <text x={lx} y={ly} textAnchor="middle" fontSize="9" fontWeight="bold"
+        fill={isSelected ? b.east : "#fff"}
+        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.9))", pointerEvents: "none" }}>
+        {b.short}
+      </text>
+      <text x={lx} y={ly + 10} textAnchor="middle" fontSize="7"
+        fill="rgba(255,255,255,0.7)" style={{ pointerEvents: "none" }}>
+        {b.floors}F
+      </text>
+    </g>
+  );
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
 export default function CampusNav3D() {
-  const [search,  setSearch]  = useState("");
-  const [selB,    setSelB]    = useState(null);
-  const [selF,    setSelF]    = useState(0);
-  const [dest,    setDest]    = useState(null);
-  const [nav,     setNav]     = useState(false);
-  const [step,    setStep]    = useState(0);
-  const [hovB,    setHovB]    = useState(null);
+  const [selB,   setSelB]   = useState(null);
+  const [selF,   setSelF]   = useState(0);
+  const [search, setSearch] = useState("");
+  const [nav,    setNav]    = useState(false);
+  const [step,   setStep]   = useState(0);
 
   const filtered = search.length > 1
-    ? DESTS.filter(d => d.label.toLowerCase().includes(search.toLowerCase())).slice(0, 6)
+    ? DESTS.filter(d => d.label.toLowerCase().includes(search.toLowerCase())).slice(0, 5)
     : [];
 
-  const selectDest = d => {
-    setDest(d); setSearch(d.label);
-    const b = BUILDINGS.find(b => b.id === d.building);
-    setSelB(b); setSelF(d.floor);
-  };
+  // Ground polygon
+  const gnd = [pt(0,0), pt(17,0), pt(17,13), pt(0,13)].join(" ");
 
-  const dirs = dest
-    ? [`Exit Main Gate`, `Head towards ${dest.label.split(" ")[0]} building`,
-       `Enter through main entrance`, `Go to Floor ${dest.floor + 1}`, `${dest.label} on your right`]
+  // Roads
+  const roadH = [pt(0,5.5), pt(17,5.5), pt(17,6.5), pt(0,6.5)].join(" ");
+  const roadV = [pt(6.5,0), pt(7.5,0), pt(7.5,13), pt(6.5,13)].join(" ");
+
+  // Gardens
+  const g1 = [pt(7.5,3.5), pt(8.5,3.5), pt(8.5,4.5), pt(7.5,4.5)].join(" ");
+  const g2 = [pt(7.5,7.5), pt(8.5,7.5), pt(8.5,8.5), pt(7.5,8.5)].join(" ");
+
+  // Sort buildings painter's order (back=low col+row first)
+  const sorted = [...BUILDINGS].sort((a, b) => (a.col + a.row) - (b.col + b.row));
+
+  // Main gate position
+  const [gx, gy] = iso(2, 5.5, 0);
+
+  const dirs = selB
+    ? ["Exit Main Gate", `Walk towards ${selB.name}`, "Enter through main entrance", `Go to Floor ${selF + 1}`, "You have arrived! ✓"]
     : [];
 
   return (
     <div className="space-y-4 animate-fade-in">
 
       {/* Header */}
-      <div className="rounded-2xl p-4 text-white flex items-center justify-between"
-        style={{background:"linear-gradient(135deg,#0f172a,#1e3a5f,#0f172a)"}}>
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"/>
-            <span className="text-xs font-bold text-emerald-300">LIVE CAMPUS MAP</span>
-          </div>
-          <h2 className="text-lg font-black">Trident Academy of Technology</h2>
-          <p className="text-xs text-slate-400 mt-0.5">Click any building to view details • Top-down floor plan</p>
+      <div className="rounded-2xl p-4 text-white"
+        style={{ background: "linear-gradient(135deg,#0f172a,#1e3a5f,#0f172a)" }}>
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-xs font-bold text-emerald-300">3D ISOMETRIC CAMPUS MAP</span>
         </div>
-        <div className="text-right text-xs text-slate-400 hidden sm:block">
-          <div className="font-bold text-white">{BUILDINGS.length} Buildings</div>
-          <div>Bhubaneswar, Odisha</div>
-        </div>
+        <h2 className="text-lg font-black">Trident Academy of Technology</h2>
+        <p className="text-xs text-slate-400 mt-0.5">Click any building to view details • Isometric 3D view</p>
       </div>
 
-      {/* Search bar */}
+      {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"/>
-        <input value={search} onChange={e=>setSearch(e.target.value)}
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Search room, lab, office…"
-          className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-        {search && <button onClick={()=>{setSearch("");setDest(null);}} className="absolute right-3 top-1/2 -translate-y-1/2">
-          <X className="w-4 h-4 text-slate-400"/>
-        </button>}
+          className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        {search && <button onClick={() => { setSearch(""); }} className="absolute right-3 top-1/2 -translate-y-1/2">
+          <X className="w-4 h-4 text-slate-400" /></button>}
         {filtered.length > 0 && (
           <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 rounded-xl mt-1 shadow-xl z-20 overflow-hidden">
-            {filtered.map((d,i)=>(
-              <button key={i} onClick={()=>selectDest(d)}
-                className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 text-left border-b border-slate-100 last:border-0">
-                <MapPin className="w-3.5 h-3.5 text-blue-500 flex-shrink-0"/>
+            {filtered.map((d, i) => (
+              <button key={i} onClick={() => {
+                const b = BUILDINGS.find(b => b.id === d.building);
+                setSelB(b); setSelF(d.floor); setSearch(d.label);
+              }} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 text-left border-b border-slate-100 last:border-0">
+                <MapPin className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-bold text-slate-900">{d.label}</div>
-                  <div className="text-xs text-slate-400">{d.time} walk · {d.distance}</div>
+                  <div className="text-xs text-slate-400">{d.time} · {d.distance}</div>
                 </div>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${TAGS[d.tag]||""}`}>{d.tag}</span>
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${TAGS[d.tag] || ""}`}>{d.tag}</span>
               </button>
             ))}
           </div>
@@ -182,263 +231,223 @@ export default function CampusNav3D() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-        {/* ── 2D TOP-DOWN CAMPUS MAP ─────────────────────────────── */}
-        <div className="lg:col-span-2 rounded-2xl overflow-hidden border-2 border-slate-200 shadow-xl bg-white">
+        {/* ── 3D ISOMETRIC SVG MAP ─────────────────────────────── */}
+        <div className="lg:col-span-2 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl"
+          style={{ background: "#080d1a" }}>
 
-          {/* Map header */}
-          <div className="px-4 py-2 bg-slate-800 flex items-center justify-between">
-            <span className="text-white text-xs font-bold">📍 TAT Campus — Floor Plan (Top View)</span>
+          <div className="px-4 py-2 bg-slate-900 border-b border-slate-800 flex justify-between items-center">
+            <span className="text-white text-xs font-bold">📍 TAT Campus — 3D Isometric Map</span>
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"/>
-              <span className="text-emerald-300 text-[10px] font-bold">LIVE</span>
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-emerald-400 text-[10px] font-bold">LIVE</span>
             </div>
           </div>
 
-          {/* SVG MAP */}
-          <svg viewBox="0 0 100 100" width="100%" style={{display:"block", aspectRatio:"4/3",
-            background:"linear-gradient(135deg,#f0f9ff,#f8fafc,#f0fdf4)"}}>
+          <svg viewBox="-240 -100 520 430" width="100%" style={{ display: "block" }}>
+            {/* Sky background */}
+            <defs>
+              <radialGradient id="bgGrad" cx="50%" cy="50%">
+                <stop offset="0%" stopColor="#0c1a3a" />
+                <stop offset="100%" stopColor="#050a14" />
+              </radialGradient>
+            </defs>
+            <rect x="-240" y="-100" width="520" height="430" fill="url(#bgGrad)" />
 
-            {/* Campus boundary */}
-            <rect x="1" y="1" width="98" height="98" fill="none" stroke="#cbd5e1" strokeWidth="0.5" rx="1"/>
-            <rect x="2" y="2" width="96" height="96" fill="#f8fafc" rx="0.5"/>
+            {/* Ground plane */}
+            <polygon points={gnd} fill="#0d1f35" stroke="#1e3a5f" strokeWidth="0.5" />
 
-            {/* Green campus lawn background */}
-            <rect x="2" y="2" width="96" height="96" fill="#f0fdf4" rx="0.5"/>
-
-            {/* Roads */}
-            {/* Main horizontal road */}
-            <rect x="0" y="29" width="100" height="5" fill="#334155"/>
-            <line x1="0" y1="31.5" x2="100" y2="31.5" stroke="#64748b" strokeWidth="0.3" strokeDasharray="2,2"/>
-            <text x="50" y="33.2" textAnchor="middle" fontSize="1.4" fill="#94a3b8" fontWeight="bold">MAIN CAMPUS ROAD</text>
-
-            {/* Main vertical road */}
-            <rect x="39" y="0" width="5" height="100" fill="#334155"/>
-            <line x1="41.5" y1="0" x2="41.5" y2="100" stroke="#64748b" strokeWidth="0.3" strokeDasharray="2,2"/>
-
-            {/* Secondary road horizontal */}
-            <rect x="0" y="55" width="100" height="3" fill="#475569"/>
-            {/* Secondary road vertical */}
-            <rect x="69" y="0" width="3" height="100" fill="#475569"/>
-
-            {/* Footpaths */}
-            <line x1="2" y1="35" x2="38" y2="35" stroke="#94a3b8" strokeWidth="0.4" strokeDasharray="1,1"/>
-            <line x1="45" y1="35" x2="68" y2="35" stroke="#94a3b8" strokeWidth="0.4" strokeDasharray="1,1"/>
-            <line x1="73" y1="35" x2="98" y2="35" stroke="#94a3b8" strokeWidth="0.4" strokeDasharray="1,1"/>
-
-            {/* Gardens / green areas */}
-            <rect x="3" y="60" width="8" height="8" fill="#bbf7d0" stroke="#86efac" strokeWidth="0.3" rx="1"/>
-            <text x="7" y="65.5" textAnchor="middle" fontSize="1.5" fill="#15803d">🌳</text>
-            <rect x="45" y="3" width="7" height="6" fill="#bbf7d0" stroke="#86efac" strokeWidth="0.3" rx="1"/>
-            <text x="48.5" y="7" textAnchor="middle" fontSize="1.5" fill="#15803d">🌳</text>
-
-            {/* Parking */}
-            <rect x="3" y="80" width="8" height="10" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="0.3" rx="0.5"/>
-            <text x="7" y="86" textAnchor="middle" fontSize="1.6" fill="#475569" fontWeight="bold">P</text>
-            <text x="7" y="88.5" textAnchor="middle" fontSize="1" fill="#64748b">Parking</text>
-
-            {/* Main Gate */}
-            <rect x="19" y="97" width="6" height="3" fill="#1d4ed8" rx="0.3"/>
-            <text x="22" y="99.5" textAnchor="middle" fontSize="1.4" fill="white" fontWeight="bold">GATE</text>
-
-            {/* Buildings */}
-            {BUILDINGS.map(b => {
-              const isSelected = selB?.id === b.id;
-              const isHov = hovB === b.id;
-              const isDest = dest?.building === b.id;
-              return (
-                <g key={b.id} style={{cursor:"pointer"}}
-                  onClick={()=>{ setSelB(s=>s?.id===b.id?null:b); setSelF(0); }}
-                  onMouseEnter={()=>setHovB(b.id)}
-                  onMouseLeave={()=>setHovB(null)}>
-                  {/* Selection glow */}
-                  {(isSelected||isHov) && (
-                    <rect x={b.x-0.8} y={b.y-0.8} width={b.w+1.6} height={b.h+1.6}
-                      fill="none" stroke={b.color} strokeWidth={isSelected?"1":"0.5"}
-                      strokeOpacity={isSelected?1:0.5} rx="1.5"
-                      style={{filter:`drop-shadow(0 0 3px ${b.color})`}}/>
-                  )}
-                  {/* Destination highlight */}
-                  {isDest && (
-                    <rect x={b.x-1} y={b.y-1} width={b.w+2} height={b.h+2}
-                      fill="none" stroke="#fbbf24" strokeWidth="0.8" rx="1.5"
-                      strokeDasharray="2,1"/>
-                  )}
-                  {/* Building body */}
-                  <rect x={b.x} y={b.y} width={b.w} height={b.h}
-                    fill={isSelected ? b.color : b.bg}
-                    stroke={b.border} strokeWidth="0.4" rx="1"
-                    opacity={isSelected?0.95:0.9}/>
-                  {/* Building pattern (floors) */}
-                  {Array.from({length:b.floors-1},(_,i)=>(
-                    <line key={i}
-                      x1={b.x+1} y1={b.y + (b.h/(b.floors))*(i+1)}
-                      x2={b.x+b.w-1} y2={b.y + (b.h/(b.floors))*(i+1)}
-                      stroke={isSelected?"rgba(255,255,255,0.3)":b.border}
-                      strokeWidth="0.25" strokeDasharray="1,0.5"/>
-                  ))}
-                  {/* Building name */}
-                  <text x={b.x+b.w/2} y={b.y+b.h/2-1.2} textAnchor="middle"
-                    fontSize="2" fontWeight="bold"
-                    fill={isSelected?"white":b.color}>
-                    {b.short}
-                  </text>
-                  <text x={b.x+b.w/2} y={b.y+b.h/2+1.8} textAnchor="middle"
-                    fontSize="1.3" fill={isSelected?"rgba(255,255,255,0.8)":"#64748b"}>
-                    {b.floors}F
-                  </text>
-                  {/* Selected marker */}
-                  {isSelected && (
-                    <circle cx={b.x+b.w/2} cy={b.y+2} r="1.5" fill="white" opacity="0.9"/>
-                  )}
-                </g>
-              );
+            {/* Grid lines */}
+            {Array.from({ length: 18 }, (_, i) => {
+              const [ax, ay] = iso(i, 0); const [bx, by] = iso(i, 13);
+              return <line key={`gv${i}`} x1={ax} y1={ay} x2={bx} y2={by} stroke="#1a2f4a" strokeWidth="0.4" />;
+            })}
+            {Array.from({ length: 14 }, (_, i) => {
+              const [ax, ay] = iso(0, i); const [bx, by] = iso(17, i);
+              return <line key={`gh${i}`} x1={ax} y1={ay} x2={bx} y2={by} stroke="#1a2f4a" strokeWidth="0.4" />;
             })}
 
-            {/* Compass */}
-            <g transform="translate(95,5)">
-              <circle cx="0" cy="0" r="3.5" fill="white" stroke="#cbd5e1" strokeWidth="0.3"/>
-              <text x="0" y="-1.5" textAnchor="middle" fontSize="2" fontWeight="bold" fill="#ef4444">N</text>
-              <polygon points="0,-3 0.6,-1 0,0 -0.6,-1" fill="#ef4444"/>
-              <polygon points="0,3 0.6,1 0,0 -0.6,1" fill="#94a3b8"/>
-            </g>
+            {/* Roads */}
+            <polygon points={roadH} fill="#1e293b" opacity="0.95" />
+            <polygon points={roadV} fill="#1e293b" opacity="0.95" />
+            {/* Road center lines */}
+            {(() => { const [ax,ay]=iso(0,6); const [bx,by]=iso(17,6); return <line x1={ax} y1={ay} x2={bx} y2={by} stroke="#334155" strokeWidth="0.4" strokeDasharray="3,2"/>; })()}
+            {(() => { const [ax,ay]=iso(7,0); const [bx,by]=iso(7,13); return <line x1={ax} y1={ay} x2={bx} y2={by} stroke="#334155" strokeWidth="0.4" strokeDasharray="3,2"/>; })()}
 
-            {/* Scale bar */}
-            <g transform="translate(3,95)">
-              <line x1="0" y1="0" x2="10" y2="0" stroke="#475569" strokeWidth="0.5"/>
-              <line x1="0" y1="-0.8" x2="0" y2="0.8" stroke="#475569" strokeWidth="0.5"/>
-              <line x1="10" y1="-0.8" x2="10" y2="0.8" stroke="#475569" strokeWidth="0.5"/>
-              <text x="5" y="-1.2" textAnchor="middle" fontSize="1.2" fill="#64748b">100m</text>
-            </g>
+            {/* Road labels */}
+            {(() => { const [x,y]=iso(3,6.3); return <text x={x} y={y} fontSize="6" fill="#475569" fontWeight="bold" textAnchor="middle">MAIN ROAD</text>; })()}
+            {(() => { const [x,y]=iso(7.3,3); return <text x={x} y={y} fontSize="6" fill="#475569" fontWeight="bold" textAnchor="middle" transform={`rotate(-30,${iso(7.3,3)[0]},${iso(7.3,3)[1]})`}>CROSS ROAD</text>; })()}
+
+            {/* Gardens */}
+            <polygon points={g1} fill="#14532d" opacity="0.8" />
+            <polygon points={g2} fill="#14532d" opacity="0.8" />
+            {(() => { const [x,y]=iso(8,4); return <text x={x} y={y} fontSize="7" textAnchor="middle">🌳</text>; })()}
+            {(() => { const [x,y]=iso(8,8); return <text x={x} y={y} fontSize="7" textAnchor="middle">🌳</text>; })()}
+
+            {/* Parking */}
+            {(() => {
+              const pts = [pt(1,11), pt(4,11), pt(4,13), pt(1,13)].join(" ");
+              const [x,y] = iso(2.5, 12);
+              return <>
+                <polygon points={pts} fill="#1e293b" opacity="0.6" />
+                <text x={x} y={y} fontSize="7" fill="#64748b" fontWeight="bold" textAnchor="middle">P</text>
+              </>;
+            })()}
+
+            {/* Buildings — sorted back to front */}
+            {sorted.map(b => (
+              <IsoBuilding key={b.id} b={b}
+                isSelected={selB?.id === b.id}
+                onClick={() => { setSelB(s => s?.id === b.id ? null : b); setSelF(0); setNav(false); }} />
+            ))}
+
+            {/* Main Gate */}
+            <polygon points={[pt(2,5.5), pt(4,5.5), pt(4,6.5), pt(2,6.5)].join(" ")}
+              fill="#1d4ed8" opacity="0.9" />
+            <text x={gx} y={gy + 4} textAnchor="middle" fontSize="7" fill="white" fontWeight="bold">GATE</text>
+
+            {/* Compass */}
+            {(() => {
+              const [cx, cy] = iso(16.5, 0.5, 0);
+              return (
+                <g transform={`translate(${cx},${cy})`}>
+                  <circle r="12" fill="rgba(15,23,42,0.85)" stroke="#1e3a5f" strokeWidth="0.5" />
+                  <text x="0" y="-5" textAnchor="middle" fontSize="7" fill="#ef4444" fontWeight="bold">N</text>
+                  <polygon points="0,-10 2,-4 0,-2 -2,-4" fill="#ef4444" />
+                  <polygon points="0,10 2,4 0,2 -2,4" fill="#475569" />
+                  <text x="0" y="14" textAnchor="middle" fontSize="5" fill="#64748b">S</text>
+                </g>
+              );
+            })()}
+
+            {/* Hint text */}
+            {(() => { const [x,y]=iso(8.5,13.5); return <text x={x} y={y+10} textAnchor="middle" fontSize="8" fill="rgba(100,150,200,0.6)" fontWeight="bold">CLICK A BUILDING TO VIEW INFO</text>; })()}
           </svg>
 
           {/* Legend */}
-          <div className="px-4 py-2 bg-white border-t border-slate-100 flex flex-wrap gap-2">
-            {BUILDINGS.map(b=>(
+          <div className="px-4 py-2 bg-slate-900 border-t border-slate-800 flex flex-wrap gap-1.5">
+            {BUILDINGS.map(b => (
               <button key={b.id}
-                onClick={()=>{ setSelB(s=>s?.id===b.id?null:b); setSelF(0); }}
-                className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-bold border transition-all ${selB?.id===b.id?'text-white':'text-slate-600 hover:bg-slate-50'}`}
-                style={selB?.id===b.id?{background:b.color,borderColor:b.color}:{borderColor:b.border, background:b.bg}}>
-                <div className="w-2 h-2 rounded-sm" style={{background:b.color}}/>
+                onClick={() => { setSelB(s => s?.id === b.id ? null : b); setSelF(0); }}
+                className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold transition-all"
+                style={selB?.id === b.id
+                  ? { background: b.top, color: "#0f172a" }
+                  : { background: "rgba(255,255,255,0.07)", color: "#94a3b8" }}>
+                <div className="w-2 h-2 rounded-sm" style={{ background: b.top }} />
                 {b.short}
               </button>
             ))}
           </div>
         </div>
 
-        {/* ── RIGHT PANEL ────────────────────────────────────────── */}
+        {/* ── INFO PANEL ────────────────────────────────────────── */}
         <div className="space-y-3">
-
-          {/* Building info when selected */}
           {selB ? (
             <div className="bg-white rounded-2xl border-2 shadow-lg overflow-hidden"
-              style={{borderColor: selB.color+"55"}}>
+              style={{ borderColor: selB.top + "88" }}>
               {/* Header */}
-              <div className="p-4 text-white relative" style={{background:`linear-gradient(135deg,${selB.color},${selB.color}cc)`}}>
-                <button onClick={()=>setSelB(null)}
+              <div className="p-4 text-white relative" style={{ background: `linear-gradient(135deg,${selB.east},${selB.south})` }}>
+                <button onClick={() => { setSelB(null); setNav(false); }}
                   className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                  <X className="w-3.5 h-3.5 text-white"/>
+                  <X className="w-3.5 h-3.5 text-white" />
                 </button>
-                <div className="text-xs opacity-75 mb-0.5">{selB.id.toUpperCase()}</div>
-                <h3 className="font-black text-base leading-tight">{selB.name}</h3>
-                <p className="text-xs opacity-80 mt-1">{selB.floors} Floors · TAT Campus</p>
+                <h3 className="font-black text-base pr-7">{selB.name}</h3>
+                <p className="text-xs opacity-80 mt-0.5">{selB.floors} Floors · TAT Campus</p>
                 <p className="text-[10px] opacity-70 mt-1">{selB.desc}</p>
               </div>
-
               <div className="p-3 space-y-3">
-                {/* Facilities */}
+                {/* Amenities */}
                 <div>
                   <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5">Facilities</p>
                   <div className="flex flex-wrap gap-1">
-                    {selB.amenities.map((a,i)=>(
+                    {selB.amenities.map((a, i) => (
                       <span key={i} className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white"
-                        style={{background:selB.color}}>✓ {a}</span>
+                        style={{ background: selB.east }}>✓ {a}</span>
                     ))}
                   </div>
                 </div>
-
-                {/* Floor selector */}
+                {/* Floor select */}
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5">Select Floor</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5">Floor Explorer</p>
                   <div className="flex gap-1 mb-2">
-                    {Array.from({length:selB.floors},(_,i)=>(
-                      <button key={i} onClick={()=>setSelF(i)}
+                    {Array.from({ length: selB.floors }, (_, i) => (
+                      <button key={i} onClick={() => setSelF(i)}
                         className="flex-1 py-1.5 rounded-lg text-xs font-black transition-all"
-                        style={selF===i?{background:selB.color,color:"white",boxShadow:`0 2px 8px ${selB.color}55`}:{background:"#f1f5f9",color:"#475569"}}>
-                        F{i+1}
+                        style={selF === i ? { background: selB.east, color: "white" } : { background: "#f1f5f9", color: "#475569" }}>
+                        F{i + 1}
                       </button>
                     ))}
                   </div>
                   <div className="bg-slate-50 rounded-xl p-2.5 space-y-1">
-                    <p className="text-[10px] text-slate-400 font-bold">Floor {selF+1} Rooms</p>
-                    {(selB.rooms[selF]||[]).map((room,i)=>(
+                    <p className="text-[10px] text-slate-400 font-bold">Floor {selF + 1} Rooms</p>
+                    {(selB.rooms[selF] || []).map((room, i) => (
                       <div key={i} className="flex items-center gap-1.5 text-[11px] text-slate-700">
-                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{background:selB.color}}/>
+                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: selB.top }} />
                         {room}
                       </div>
                     ))}
                   </div>
                 </div>
-
-                {/* Navigate */}
+                {/* Navigation */}
                 {!nav ? (
-                  <button onClick={()=>{setDest(DESTS.find(d=>d.building===selB.id)||{building:selB.id,label:selB.name,floor:selF,time:"3 min",distance:"200m"});setNav(true);setStep(0);}}
+                  <button onClick={() => { setNav(true); setStep(0); }}
                     className="w-full py-2 rounded-xl text-white text-xs font-bold flex items-center justify-center gap-2"
-                    style={{background:selB.color}}>
-                    <Navigation className="w-3.5 h-3.5"/> Navigate Here
+                    style={{ background: selB.east }}>
+                    <Navigation className="w-3.5 h-3.5" /> Navigate Here
                   </button>
                 ) : (
                   <div className="p-3 rounded-xl border-2 space-y-2"
-                    style={{background:selB.color+"08",borderColor:selB.color+"33"}}>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold" style={{color:selB.color}}>Step {step+1}/{dirs.length}</span>
-                      <button onClick={()=>{setNav(false);setStep(0);}} className="text-[10px] text-slate-400">✕ End</button>
+                    style={{ background: selB.top + "10", borderColor: selB.top + "44" }}>
+                    <div className="flex justify-between">
+                      <span className="text-xs font-bold" style={{ color: selB.east }}>Step {step + 1}/{dirs.length}</span>
+                      <button onClick={() => { setNav(false); setStep(0); }} className="text-[10px] text-slate-400">✕</button>
                     </div>
                     <div className="text-xs font-bold text-slate-900">→ {dirs[step]}</div>
                     <div className="flex gap-2">
-                      {step>0 && <button onClick={()=>setStep(s=>s-1)} className="flex-1 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold">← Back</button>}
-                      {step<dirs.length-1
-                        ? <button onClick={()=>setStep(s=>s+1)} className="flex-1 py-1.5 rounded-lg text-white text-[11px] font-bold" style={{background:selB.color}}>Next →</button>
-                        : <div className="flex-1 py-1.5 rounded-lg text-white text-[11px] font-bold text-center bg-emerald-500">🏁 Arrived!</div>}
+                      {step > 0 && <button onClick={() => setStep(s => s - 1)} className="flex-1 py-1.5 rounded-lg bg-slate-100 text-xs font-bold">← Back</button>}
+                      {step < dirs.length - 1
+                        ? <button onClick={() => setStep(s => s + 1)} className="flex-1 py-1.5 rounded-lg text-white text-xs font-bold" style={{ background: selB.east }}>Next →</button>
+                        : <div className="flex-1 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold text-center">🏁 Arrived!</div>}
                     </div>
                   </div>
                 )}
               </div>
             </div>
           ) : (
-            /* Default — quick access */
             <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
               <div className="flex items-center gap-2 mb-3">
-                <Layers className="w-4 h-4 text-blue-500"/>
+                <Layers className="w-4 h-4 text-blue-500" />
                 <p className="text-sm font-bold text-slate-700">Quick Access</p>
               </div>
               <div className="space-y-1.5">
-                {DESTS.slice(0,6).map((d,i)=>(
-                  <button key={i} onClick={()=>selectDest(d)}
-                    className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50 border border-transparent hover:border-blue-200 text-left transition-all">
-                    <MapPin className="w-3 h-3 text-blue-500 flex-shrink-0"/>
+                {DESTS.map((d, i) => (
+                  <button key={i} onClick={() => {
+                    const b = BUILDINGS.find(b => b.id === d.building);
+                    setSelB(b); setSelF(d.floor);
+                  }} className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-blue-50 border border-transparent hover:border-blue-200 text-left transition-all">
+                    <MapPin className="w-3 h-3 text-blue-500 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-bold text-slate-800 truncate">{d.label}</div>
                       <div className="text-[10px] text-slate-400">{d.time} · {d.distance}</div>
                     </div>
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${TAGS[d.tag]||""}`}>{d.tag}</span>
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${TAGS[d.tag] || ""}`}>{d.tag}</span>
                   </button>
                 ))}
               </div>
             </div>
           )}
 
-          {/* All buildings mini list */}
+          {/* All buildings */}
           <div className="bg-white rounded-2xl p-3 border border-slate-200 shadow-sm">
             <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">All Buildings</p>
             <div className="space-y-1">
-              {BUILDINGS.map(b=>(
-                <button key={b.id} onClick={()=>{setSelB(s=>s?.id===b.id?null:b);setSelF(0);}}
-                  className={`w-full flex items-center gap-2 p-1.5 rounded-lg text-left transition-all ${selB?.id===b.id?'text-white':'hover:bg-slate-50'}`}
-                  style={selB?.id===b.id?{background:b.color}:{}}>
-                  <div className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{background:b.color}}/>
+              {BUILDINGS.map(b => (
+                <button key={b.id} onClick={() => { setSelB(s => s?.id === b.id ? null : b); setSelF(0); }}
+                  className="w-full flex items-center gap-2 p-1.5 rounded-lg text-left transition-all"
+                  style={selB?.id === b.id ? { background: b.east } : {}}>
+                  <div className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: b.top }} />
                   <span className="text-xs font-bold flex-1 truncate"
-                    style={selB?.id===b.id?{color:"white"}:{color:"#334155"}}>{b.name}</span>
-                  <span className="text-[9px]" style={selB?.id===b.id?{color:"rgba(255,255,255,0.7)"}:{color:"#94a3b8"}}>{b.floors}F</span>
+                    style={{ color: selB?.id === b.id ? "white" : "#334155" }}>{b.name}</span>
+                  <span className="text-[9px]" style={{ color: selB?.id === b.id ? "rgba(255,255,255,0.7)" : "#94a3b8" }}>{b.floors}F</span>
                 </button>
               ))}
             </div>
