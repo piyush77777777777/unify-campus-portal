@@ -477,7 +477,6 @@ export default function CampusNav3D() {
               ))}
             </div>
           </div>
-          </div>
         </div>
       </div>
 
