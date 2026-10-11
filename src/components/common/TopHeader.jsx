@@ -71,22 +71,33 @@ export default function TopHeader({ activeTab, setMobileOpen }) {
   const ringColor = ROLE_COLORS[activeRole] || 'ring-slate-400';
   const badgeClass = ROLE_BADGE[activeRole] || 'bg-slate-50 text-slate-600 border-slate-200';
 
+  const headerGrad = {
+    student:     'linear-gradient(90deg,#1e3a8a,#2563eb,#0284c7)',
+    teacher:     'linear-gradient(90deg,#3b0764,#6d28d9,#7c3aed)',
+    warden:      'linear-gradient(90deg,#4c0519,#be123c,#e11d48)',
+    guard:       'linear-gradient(90deg,#052e16,#15803d,#16a34a)',
+    messManager: 'linear-gradient(90deg,#431407,#c2410c,#ea580c)',
+    parent:      'linear-gradient(90deg,#134e4a,#0d9488,#14b8a6)',
+    principal:   'linear-gradient(90deg,#1c1917,#57534e,#a8a29e)',
+  }[activeRole] || 'linear-gradient(90deg,#1e3a8a,#3b82f6)';
+
   return (
-    <header className="sticky top-0 z-20 bg-white border-b border-slate-200 shadow-sm px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+    <header className="sticky top-0 z-20 shadow-lg px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3"
+      style={{background: headerGrad}}>
 
       {/* Left: Mobile menu + breadcrumb + page title */}
       <div className="flex items-center gap-3 min-w-0">
         <button onClick={() => setMobileOpen(true)}
-          className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 border border-slate-200 flex-shrink-0">
+          className="lg:hidden p-2 rounded-xl text-white/80 hover:bg-white/10 border border-white/20 flex-shrink-0">
           <Menu className="w-5 h-5" />
         </button>
         <div className="min-w-0">
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
-            <span className="font-bold text-slate-500">UNIFY</span>
+          <div className="flex items-center gap-1.5 text-[11px] text-white/60 font-medium">
+            <span className="font-bold text-white/80">UNIFY</span>
             <ChevronRight className="w-3 h-3" />
-            <span className="text-blue-600 font-bold capitalize truncate">{PAGE_TITLES[activeTab] || activeTab}</span>
+            <span className="text-white font-bold capitalize truncate">{PAGE_TITLES[activeTab] || activeTab}</span>
           </div>
-          <h1 className="text-sm sm:text-base font-black text-slate-900 leading-tight truncate">
+          <h1 className="text-sm sm:text-base font-black text-white leading-tight truncate drop-shadow">
             {PAGE_TITLES[activeTab] || 'UNIFY Portal'}
           </h1>
         </div>
@@ -97,39 +108,39 @@ export default function TopHeader({ activeTab, setMobileOpen }) {
 
         {/* Notification bell */}
         <div className="relative">
-          <button className="p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 border border-slate-200 transition-all touch-manipulation">
+          <button className="p-2.5 rounded-xl text-white/80 hover:bg-white/15 border border-white/20 transition-all touch-manipulation">
             <Bell className="w-4.5 h-4.5" />
           </button>
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-4 h-4 text-white text-[9px] font-black rounded-full flex items-center justify-center badge-grad">
               {unreadCount}
             </span>
           )}
         </div>
 
-        {/* Profile avatar — click shows read-only info + sign out only */}
+        {/* Profile avatar */}
         <div className="relative" ref={dropdownRef}>
           <button onClick={() => setDropdownOpen(!dropdownOpen)}
-            className={`relative p-0.5 rounded-full ring-2 ${ringColor} hover:opacity-90 transition-all shadow-md`}>
+            className={`relative p-0.5 rounded-full ring-2 ring-white/40 hover:ring-white/80 hover:opacity-90 transition-all shadow-md`}>
             <img src={displayAvatar} alt={displayName}
               className="w-9 h-9 rounded-full object-cover" />
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white" />
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-white" />
           </button>
 
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50">
 
               {/* Profile header */}
-              <div className="p-4 bg-slate-50 border-b border-slate-100">
+              <div className="p-4 border-b border-slate-100" style={{background: headerGrad}}>
                 <div className="flex items-center gap-3">
                   <img src={displayAvatar} alt={displayName}
-                    className={`w-12 h-12 rounded-full object-cover ring-2 ${ringColor}`} />
+                    className="w-12 h-12 rounded-full object-cover ring-2 ring-white/60" />
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-slate-900 text-sm truncate">{displayName}</div>
+                    <div className="font-bold text-white text-sm truncate">{displayName}</div>
                     {displayEmail && (
-                      <div className="text-[11px] text-slate-500 truncate">{displayEmail}</div>
+                      <div className="text-[11px] text-white/70 truncate">{displayEmail}</div>
                     )}
-                    <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${badgeClass}`}>
+                    <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-white/20 text-white border border-white/30">
                       {roleLabel}
                     </span>
                   </div>

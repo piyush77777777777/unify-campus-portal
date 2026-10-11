@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, Navigation, MapPin, X, ChevronRight, Camera, Layers, RotateCcw } from "lucide-react";
 
-const CELL = 52;
-const FH   = 30;
+const CELL = 72;
+const FH   = 38;
 
 const BUILDINGS = [
   { id:"library",  name:"Central Library",     short:"Library",  col:1,  row:4,  w:2, d:2, floors:3,
@@ -455,14 +455,15 @@ export default function CampusNav3D() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* 3D X-RAY MAP CANVAS */}
-        <div className="lg:col-span-2 rounded-3xl overflow-hidden border border-slate-800 shadow-2xl"
+      {/* FULL-WIDTH 3D MAP + Side panel below */}
+      <div className="space-y-4">
+        {/* 3D X-RAY MAP CANVAS — full width */}
+        <div className="rounded-3xl overflow-hidden border border-slate-800 shadow-2xl w-full"
           style={{background:"#020c1b"}}>
           <div className="px-4 py-3 flex items-center justify-between border-b border-slate-800">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"/>
-              <span className="text-white font-bold text-sm">Trident Academy of Technology — CSS 3D X-Ray</span>
+              <span className="text-white font-bold text-sm">Trident Academy of Technology — CSS 3D X-Ray Map</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-cyan-400 font-bold bg-cyan-900/30 border border-cyan-700/40 px-2 py-0.5 rounded-full">REAL 3D</span>
@@ -484,20 +485,20 @@ export default function CampusNav3D() {
             </div>
           </div>
 
-          {/* THE REAL 3D MAP */}
+          {/* THE REAL 3D MAP — bigger and full width */}
           <div
-            style={{height:420, perspective:"1300px", overflow:"hidden", position:"relative", userSelect:"none"}}
+            style={{height:580, perspective:"1600px", overflow:"hidden", position:"relative", userSelect:"none"}}
             onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={onMouseUp}>
 
-            {/* Starfield/grid background */}
+            {/* Dark space background */}
             <div style={{
               position:"absolute",inset:0,
-              backgroundImage:"radial-gradient(circle at 30% 40%,#0c1a3a 0%,transparent 60%),radial-gradient(circle at 70% 60%,#1a0c3a 0%,transparent 60%)",
+              backgroundImage:"radial-gradient(ellipse at 30% 40%,#0c1a3a 0%,transparent 60%),radial-gradient(ellipse at 70% 60%,#1a0c3a 0%,transparent 60%),radial-gradient(ellipse at 50% 20%,#0a2040 0%,transparent 50%)",
             }}/>
 
-            {/* Scene */}
+            {/* Scene — centred, bigger scale */}
             <div style={{
-              position:"absolute", top:"58%", left:"40%",
+              position:"absolute", top:"60%", left:"42%",
               transformStyle:"preserve-3d",
               transform:`rotateX(${rotX}deg) rotateZ(${rotZ}deg)`,
               width:0, height:0,
@@ -588,13 +589,15 @@ export default function CampusNav3D() {
               ))}
             </div>
             <p className="text-[10px] text-slate-600">
-              Click building to X-ray floors &bull; Click again for photos &bull; Drag to orbit 360deg
+              Click building to X-ray floors • Click again for photos • Drag to orbit 360° • Use floor buttons to switch levels
             </p>
           </div>
         </div>
 
-        {/* Right panel */}
-        <div className="space-y-4">
+        {/* Bottom panels — 2 columns side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Navigation / Destination panel */}
+          <div>
           {dest && destB ? (
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
               <div className="relative h-36">
@@ -658,7 +661,7 @@ export default function CampusNav3D() {
                   <Layers className="w-7 h-7 text-blue-500"/>
                 </div>
                 <p className="text-sm font-bold text-slate-700">Real CSS 3D X-Ray Map</p>
-                <p className="text-xs text-slate-400 mt-1">Click building to reveal all floors</p>
+                <p className="text-xs text-slate-400 mt-1">Click a building to X-ray its floors</p>
               </div>
               <div className="space-y-1.5">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Quick Access</p>
@@ -678,32 +681,34 @@ export default function CampusNav3D() {
               </div>
             </div>
           )}
+          </div>{/* end nav col */}
+
+          {/* Buildings gallery — second column */}
           <div className="bg-white rounded-3xl p-4 shadow-sm border border-slate-200">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Campus Buildings</p>
-            <div className="space-y-2">
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">All Campus Buildings</p>
+            <div className="grid grid-cols-2 gap-2">
               {BUILDINGS.map(b=>(
                 <button key={b.id} onClick={()=>openB(b)}
-                  className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 text-left transition-all">
+                  className="flex items-center gap-2.5 p-2.5 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-200 text-left transition-all">
                   <div className="relative w-12 h-10 rounded-xl overflow-hidden flex-shrink-0">
                     <img src={b.image} alt={b.name} className="w-full h-full object-cover"/>
-                    <div className="absolute bottom-0 left-0 right-0 h-1" style={{background:b.base}}/>
+                    <div className="absolute bottom-0 left-0 right-0 h-1.5" style={{background:b.base}}/>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-bold text-slate-900 truncate">{b.name}</div>
-                    <div className="flex items-center gap-1 mt-0.5">
+                    <div className="flex items-center gap-0.5 mt-0.5">
                       {Array.from({length:b.floors},(_,i)=>(
-                        <div key={i} className="w-3 h-1.5 rounded-sm" style={{background:b.base,opacity:0.25+i*0.15}}/>
+                        <div key={i} style={{width:10,height:5,borderRadius:1,background:b.base,opacity:0.3+i*0.15}}/>
                       ))}
-                      <span className="text-[9px] text-slate-400 ml-0.5">{b.floors}F</span>
+                      <span className="text-[9px] text-slate-400 ml-1">{b.floors}F</span>
                     </div>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-300"/>
                 </button>
               ))}
             </div>
           </div>
-        </div>
-      </div>
+        </div>{/* end 2-col grid */}
+      </div>{/* end space-y-4 */}
     </div>
   );
 }

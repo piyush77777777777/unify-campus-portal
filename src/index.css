@@ -2,285 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ═══════════════════════════════════════════════════════════════
-   UNIFY — Global Color Grading System
-   Role-based gradient palette + UI polish
-   ═══════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   UNIFY — Vivid Color Grading System
+   ══════════════════════════════════════════ */
 
-/* ── CSS Color Variables ──────────────────────────────────────── */
-:root {
-  /* Brand gradients */
-  --grad-primary:   linear-gradient(135deg,#1e40af 0%,#3b82f6 50%,#06b6d4 100%);
-  --grad-purple:    linear-gradient(135deg,#4c1d95 0%,#7c3aed 50%,#a78bfa 100%);
-  --grad-emerald:   linear-gradient(135deg,#064e3b 0%,#10b981 50%,#6ee7b7 100%);
-  --grad-rose:      linear-gradient(135deg,#881337 0%,#f43f5e 50%,#fb7185 100%);
-  --grad-amber:     linear-gradient(135deg,#78350f 0%,#f59e0b 50%,#fcd34d 100%);
-  --grad-cyan:      linear-gradient(135deg,#0c4a6e 0%,#06b6d4 50%,#67e8f9 100%);
-  --grad-dark:      linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#0f172a 100%);
-  --grad-sunset:    linear-gradient(135deg,#7c2d12 0%,#ea580c 40%,#fbbf24 100%);
-  --grad-ocean:     linear-gradient(135deg,#0c4a6e 0%,#0284c7 50%,#38bdf8 100%);
-  --grad-midnight:  linear-gradient(160deg,#020617 0%,#0f172a 40%,#1e1b4b 80%,#020617 100%);
-
-  /* Glassmorphism */
-  --glass-light:    rgba(255,255,255,0.08);
-  --glass-border:   rgba(255,255,255,0.15);
-  --glass-shadow:   0 8px 32px rgba(0,0,0,0.3);
-}
-
-/* ── Base Body ─────────────────────────────────────────────────── */
 @layer base {
+  * { box-sizing: border-box; }
   body {
     @apply antialiased font-sans;
-    background: #f0f4ff;
-    background-image:
-      radial-gradient(ellipse at 20% 10%, #dbeafe55 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 90%, #ede9fe55 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, #f0fdf455 0%, transparent 70%);
-    color: #0f172a;
+    background: linear-gradient(160deg,#dbeafe 0%,#ede9fe 35%,#fce7f3 65%,#d1fae5 100%);
     min-height: 100vh;
-    selection-color: white;
     -webkit-font-smoothing: antialiased;
   }
-
-  * { @apply transition-colors duration-150; }
-  *:focus-visible { @apply outline-none ring-2 ring-blue-500 ring-offset-2; }
 }
 
-/* ── Custom Scrollbar ──────────────────────────────────────────── */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+::-webkit-scrollbar-track { background: #e0e7ff; border-radius: 10px; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg,#3b82f6,#7c3aed);
+  background: linear-gradient(180deg,#6366f1,#7c3aed);
   border-radius: 10px;
 }
-::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg,#2563eb,#6d28d9); }
 
-/* ── Gradient Text ─────────────────────────────────────────────── */
-@layer utilities {
-  .text-grad-blue    { background: var(--grad-primary);  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .text-grad-purple  { background: var(--grad-purple);   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .text-grad-emerald { background: var(--grad-emerald);  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .text-grad-rose    { background: var(--grad-rose);     -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .text-grad-amber   { background: var(--grad-amber);    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .text-grad-sunset  { background: var(--grad-sunset);   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+/* ── Gradient Text ── */
+.text-grad-blue    { background: linear-gradient(135deg,#1d4ed8,#3b82f6,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.text-grad-purple  { background: linear-gradient(135deg,#5b21b6,#7c3aed,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.text-grad-green   { background: linear-gradient(135deg,#065f46,#10b981,#6ee7b7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.text-grad-rose    { background: linear-gradient(135deg,#9f1239,#f43f5e,#fb7185); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.text-grad-amber   { background: linear-gradient(135deg,#92400e,#f59e0b,#fcd34d); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
-  /* Gradient backgrounds */
-  .bg-grad-primary   { background: var(--grad-primary); }
-  .bg-grad-purple    { background: var(--grad-purple); }
-  .bg-grad-emerald   { background: var(--grad-emerald); }
-  .bg-grad-rose      { background: var(--grad-rose); }
-  .bg-grad-amber     { background: var(--grad-amber); }
-  .bg-grad-dark      { background: var(--grad-dark); }
-  .bg-grad-midnight  { background: var(--grad-midnight); }
-  .bg-grad-sunset    { background: var(--grad-sunset); }
-  .bg-grad-ocean     { background: var(--grad-ocean); }
-
-  /* Glass cards */
-  .glass {
-    background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.8);
-  }
-  .glass-dark {
-    background: rgba(15,23,42,0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-
-  /* Glow effects */
-  .glow-blue   { box-shadow: 0 0 20px #3b82f655, 0 4px 16px rgba(0,0,0,0.1); }
-  .glow-purple { box-shadow: 0 0 20px #7c3aed55, 0 4px 16px rgba(0,0,0,0.1); }
-  .glow-green  { box-shadow: 0 0 20px #10b98155, 0 4px 16px rgba(0,0,0,0.1); }
-  .glow-rose   { box-shadow: 0 0 20px #f43f5e55, 0 4px 16px rgba(0,0,0,0.1); }
-  .glow-amber  { box-shadow: 0 0 20px #f59e0b55, 0 4px 16px rgba(0,0,0,0.1); }
-
-  /* Gradient borders */
-  .border-grad-blue   { border-image: linear-gradient(135deg,#3b82f6,#06b6d4) 1; }
-  .border-grad-purple { border-image: linear-gradient(135deg,#7c3aed,#3b82f6) 1; }
-}
-
-/* ── Gradient Cards ─────────────────────────────────────────────── */
-@layer components {
-  /* Student portal — ocean blue */
-  .card-student {
-    background: linear-gradient(135deg,rgba(219,234,254,0.6) 0%,rgba(224,231,255,0.6) 100%);
-    border: 1px solid rgba(147,197,253,0.5);
-    backdrop-filter: blur(8px);
-  }
-
-  /* Teacher portal — violet */
-  .card-teacher {
-    background: linear-gradient(135deg,rgba(237,233,254,0.6) 0%,rgba(219,234,254,0.6) 100%);
-    border: 1px solid rgba(196,181,253,0.5);
-    backdrop-filter: blur(8px);
-  }
-
-  /* Warden portal — rose */
-  .card-warden {
-    background: linear-gradient(135deg,rgba(255,228,230,0.6) 0%,rgba(254,226,226,0.6) 100%);
-    border: 1px solid rgba(252,165,165,0.5);
-    backdrop-filter: blur(8px);
-  }
-
-  /* Success stat */
-  .card-success {
-    background: linear-gradient(135deg,rgba(209,250,229,0.7) 0%,rgba(167,243,208,0.4) 100%);
-    border: 1px solid rgba(110,231,183,0.5);
-  }
-
-  /* Warning stat */
-  .card-warning {
-    background: linear-gradient(135deg,rgba(254,243,199,0.7) 0%,rgba(253,230,138,0.4) 100%);
-    border: 1px solid rgba(252,211,77,0.5);
-  }
-
-  /* Danger stat */
-  .card-danger {
-    background: linear-gradient(135deg,rgba(255,228,230,0.7) 0%,rgba(254,202,202,0.4) 100%);
-    border: 1px solid rgba(252,165,165,0.5);
-  }
-
-  /* Gradient button — primary */
-  .btn-grad-primary {
-    background: linear-gradient(135deg,#2563eb,#3b82f6,#06b6d4);
-    color: white;
-    font-weight: 700;
-    border: none;
-    transition: all 0.2s;
-    background-size: 200% 200%;
-    background-position: left center;
-  }
-  .btn-grad-primary:hover {
-    background-position: right center;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px #3b82f655;
-  }
-
-  .btn-grad-purple {
-    background: linear-gradient(135deg,#6d28d9,#7c3aed,#8b5cf6);
-    color: white; font-weight: 700; border: none; transition: all 0.2s;
-  }
-  .btn-grad-purple:hover { transform: translateY(-1px); box-shadow: 0 8px 24px #7c3aed55; }
-
-  .btn-grad-rose {
-    background: linear-gradient(135deg,#be123c,#f43f5e,#fb7185);
-    color: white; font-weight: 700; border: none; transition: all 0.2s;
-  }
-  .btn-grad-rose:hover { transform: translateY(-1px); box-shadow: 0 8px 24px #f43f5e55; }
-
-  .btn-grad-emerald {
-    background: linear-gradient(135deg,#065f46,#10b981,#6ee7b7);
-    color: white; font-weight: 700; border: none; transition: all 0.2s;
-  }
-  .btn-grad-emerald:hover { transform: translateY(-1px); box-shadow: 0 8px 24px #10b98155; }
-}
-
-/* ── Sidebar Color Grading ──────────────────────────────────────── */
-.sidebar-student  { background: linear-gradient(180deg,#0f172a 0%,#172554 40%,#0c4a6e 100%); }
-.sidebar-teacher  { background: linear-gradient(180deg,#0f172a 0%,#2e1065 40%,#1e1b4b 100%); }
-.sidebar-warden   { background: linear-gradient(180deg,#0f172a 0%,#4c0519 40%,#7f1d1d 100%); }
-.sidebar-guard    { background: linear-gradient(180deg,#0f172a 0%,#052e16 40%,#064e3b 100%); }
-.sidebar-mess     { background: linear-gradient(180deg,#0f172a 0%,#431407 40%,#7c2d12 100%); }
-.sidebar-parent   { background: linear-gradient(180deg,#0f172a 0%,#0c4a6e 40%,#134e4a 100%); }
-.sidebar-principal{ background: linear-gradient(180deg,#0f172a 0%,#1c1917 40%,#292524 100%); }
-.sidebar-default  { background: linear-gradient(180deg,#0f172a 0%,#1e293b 100%); }
-
-/* ── Stat Card Gradients ────────────────────────────────────────── */
-.stat-blue    { background: linear-gradient(135deg,#1e40af,#3b82f6); color: white; }
-.stat-purple  { background: linear-gradient(135deg,#4c1d95,#7c3aed); color: white; }
-.stat-emerald { background: linear-gradient(135deg,#064e3b,#10b981); color: white; }
-.stat-rose    { background: linear-gradient(135deg,#881337,#f43f5e); color: white; }
-.stat-amber   { background: linear-gradient(135deg,#78350f,#f59e0b); color: white; }
-.stat-cyan    { background: linear-gradient(135deg,#0c4a6e,#06b6d4); color: white; }
-.stat-indigo  { background: linear-gradient(135deg,#1e1b4b,#4f46e5); color: white; }
-.stat-teal    { background: linear-gradient(135deg,#134e4a,#14b8a6); color: white; }
-
-/* ── Hero Banner ────────────────────────────────────────────────── */
-.hero-student  { background: linear-gradient(135deg,#0f172a 0%,#1e3a8a 40%,#0c4a6e 80%,#0f172a 100%); }
-.hero-teacher  { background: linear-gradient(135deg,#0f172a 0%,#2e1065 40%,#1e1b4b 80%,#0f172a 100%); }
-.hero-warden   { background: linear-gradient(135deg,#0f172a 0%,#4c0519 40%,#7f1d1d 80%,#0f172a 100%); }
-.hero-principal{ background: linear-gradient(135deg,#0f172a 0%,#1c1917 40%,#44403c 80%,#0f172a 100%); }
-.hero-parent   { background: linear-gradient(135deg,#0f172a 0%,#134e4a 40%,#0c4a6e 80%,#0f172a 100%); }
-
-/* ── Notification Badge ─────────────────────────────────────────── */
-.badge-grad {
-  background: linear-gradient(135deg,#ef4444,#f97316);
-  color: white; font-weight: 900; font-size: 9px;
-  border-radius: 999px; padding: 1px 5px;
-  box-shadow: 0 2px 8px #ef444488;
-}
-
-/* ── Tab Active ─────────────────────────────────────────────────── */
-.tab-active-grad {
-  background: linear-gradient(135deg,#2563eb,#7c3aed);
-  color: white; border-radius: 10px;
-  box-shadow: 0 4px 12px #3b82f655;
-}
-
-/* ── Progress Bar ───────────────────────────────────────────────── */
-.progress-grad-blue    { background: linear-gradient(90deg,#2563eb,#06b6d4); }
-.progress-grad-green   { background: linear-gradient(90deg,#059669,#6ee7b7); }
-.progress-grad-amber   { background: linear-gradient(90deg,#d97706,#fbbf24); }
-.progress-grad-rose    { background: linear-gradient(90deg,#e11d48,#fb7185); }
-.progress-grad-purple  { background: linear-gradient(90deg,#6d28d9,#a78bfa); }
-
-/* ── Animations ─────────────────────────────────────────────────── */
-@keyframes animate-fade-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-6px); }
-}
-@keyframes pulse-ring {
-  0%   { transform: scale(1); opacity: 0.7; }
-  100% { transform: scale(1.6); opacity: 0; }
-}
-@keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(24px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes glow-pulse {
-  0%,100% { box-shadow: 0 0 8px currentColor; }
-  50%      { box-shadow: 0 0 24px currentColor; }
-}
-
-.animate-fade-in        { animation: animate-fade-in 0.4s ease-out both; }
-.animate-shimmer        { background: linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent); background-size:200%; animation: shimmer 1.5s infinite; }
-.animate-float          { animation: float 3s ease-in-out infinite; }
-.animate-slide-right    { animation: slide-in-right 0.35s ease-out both; }
-.animate-glow-pulse     { animation: glow-pulse 2s ease-in-out infinite; }
-
-/* ── Landing Page Gradient BG ───────────────────────────────────── */
-.landing-bg {
-  background: linear-gradient(160deg,#020617 0%,#0f172a 25%,#1e1b4b 50%,#0c4a6e 75%,#020617 100%);
-  position: relative;
-}
-.landing-bg::before {
-  content: '';
-  position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(ellipse at 20% 30%, #3b82f618 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 70%, #7c3aed18 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 90%, #06b6d418 0%, transparent 40%);
-}
-
-/* ── App Main BG ────────────────────────────────────────────────── */
+/* ── App Background ── */
 .app-bg {
-  background: linear-gradient(160deg,#f0f4ff 0%,#eff6ff 30%,#faf5ff 70%,#f0fdfa 100%);
+  background: linear-gradient(160deg,#dbeafe 0%,#ede9fe 35%,#fce7f3 65%,#d1fae5 100%);
   min-height: 100vh;
 }
 
-/* ── Print ──────────────────────────────────────────────────────── */
+/* ── Landing Page ── */
+.landing-bg {
+  background: linear-gradient(160deg,#020617 0%,#0f172a 20%,#1e1b4b 45%,#0c4a6e 70%,#020617 100%);
+  position: relative;
+}
+.landing-bg::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse at 15% 25%,#3b82f622 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 75%,#7c3aed22 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 85%,#06b6d422 0%,transparent 40%);
+}
+
+/* ══ SIDEBAR — Role-Based Vivid Gradients ═══════════════════════ */
+.sidebar-student   { background: linear-gradient(180deg,#0f172a 0%,#1e3a8a 50%,#1e40af 100%) !important; }
+.sidebar-teacher   { background: linear-gradient(180deg,#0f172a 0%,#3b0764 50%,#4c1d95 100%) !important; }
+.sidebar-warden    { background: linear-gradient(180deg,#0f172a 0%,#4c0519 50%,#9f1239 100%) !important; }
+.sidebar-guard     { background: linear-gradient(180deg,#0f172a 0%,#052e16 50%,#14532d 100%) !important; }
+.sidebar-mess      { background: linear-gradient(180deg,#0f172a 0%,#431407 50%,#7c2d12 100%) !important; }
+.sidebar-parent    { background: linear-gradient(180deg,#0f172a 0%,#134e4a 50%,#0f766e 100%) !important; }
+.sidebar-principal { background: linear-gradient(180deg,#0f172a 0%,#1c1917 50%,#44403c 100%) !important; }
+.sidebar-default   { background: linear-gradient(180deg,#0f172a 0%,#1e293b 100%) !important; }
+
+/* ══ HEADER Gradient ════════════════════════════════════════════ */
+.header-student    { background: linear-gradient(90deg,#1e3a8a,#2563eb,#0284c7) !important; color:white; }
+.header-teacher    { background: linear-gradient(90deg,#3b0764,#6d28d9,#7c3aed) !important; color:white; }
+.header-warden     { background: linear-gradient(90deg,#4c0519,#be123c,#e11d48) !important; color:white; }
+.header-guard      { background: linear-gradient(90deg,#052e16,#15803d,#16a34a) !important; color:white; }
+.header-mess       { background: linear-gradient(90deg,#431407,#c2410c,#ea580c) !important; color:white; }
+.header-parent     { background: linear-gradient(90deg,#134e4a,#0d9488,#14b8a6) !important; color:white; }
+.header-principal  { background: linear-gradient(90deg,#1c1917,#57534e,#78716c) !important; color:white; }
+
+/* ══ STAT CARDS ════════════════════════════════════════════════ */
+.stat-blue    { background:linear-gradient(135deg,#1e40af,#3b82f6); color:white; box-shadow:0 4px 20px #3b82f644; }
+.stat-purple  { background:linear-gradient(135deg,#4c1d95,#7c3aed); color:white; box-shadow:0 4px 20px #7c3aed44; }
+.stat-emerald { background:linear-gradient(135deg,#064e3b,#10b981); color:white; box-shadow:0 4px 20px #10b98144; }
+.stat-rose    { background:linear-gradient(135deg,#9f1239,#f43f5e); color:white; box-shadow:0 4px 20px #f43f5e44; }
+.stat-amber   { background:linear-gradient(135deg,#78350f,#f59e0b); color:white; box-shadow:0 4px 20px #f59e0b44; }
+.stat-cyan    { background:linear-gradient(135deg,#0c4a6e,#06b6d4); color:white; box-shadow:0 4px 20px #06b6d444; }
+.stat-indigo  { background:linear-gradient(135deg,#1e1b4b,#4f46e5); color:white; box-shadow:0 4px 20px #4f46e544; }
+.stat-teal    { background:linear-gradient(135deg,#134e4a,#14b8a6); color:white; box-shadow:0 4px 20px #14b8a644; }
+
+/* ══ PROGRESS BARS ════════════════════════════════════════════ */
+.progress-grad-blue   { background:linear-gradient(90deg,#2563eb,#06b6d4); }
+.progress-grad-green  { background:linear-gradient(90deg,#059669,#34d399); }
+.progress-grad-amber  { background:linear-gradient(90deg,#d97706,#fbbf24); }
+.progress-grad-rose   { background:linear-gradient(90deg,#e11d48,#fb7185); }
+.progress-grad-purple { background:linear-gradient(90deg,#6d28d9,#a78bfa); }
+
+/* ══ BUTTONS ══════════════════════════════════════════════════ */
+.btn-grad-primary { background:linear-gradient(135deg,#1d4ed8,#3b82f6,#06b6d4); color:white; font-weight:700; }
+.btn-grad-primary:hover { transform:translateY(-1px); box-shadow:0 8px 24px #3b82f666; }
+.btn-grad-purple  { background:linear-gradient(135deg,#5b21b6,#7c3aed,#8b5cf6); color:white; font-weight:700; }
+.btn-grad-purple:hover { transform:translateY(-1px); box-shadow:0 8px 24px #7c3aed66; }
+.btn-grad-rose    { background:linear-gradient(135deg,#9f1239,#f43f5e,#fb7185); color:white; font-weight:700; }
+.btn-grad-rose:hover { transform:translateY(-1px); box-shadow:0 8px 24px #f43f5e66; }
+.btn-grad-emerald { background:linear-gradient(135deg,#065f46,#10b981,#6ee7b7); color:white; font-weight:700; }
+.btn-grad-emerald:hover { transform:translateY(-1px); box-shadow:0 8px 24px #10b98166; }
+
+/* ══ GLASS CARDS ══════════════════════════════════════════════ */
+.glass {
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.85);
+}
+.glass-dark {
+  background:rgba(15,23,42,0.75);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.12);
+}
+
+/* ══ BADGE ════════════════════════════════════════════════════ */
+.badge-grad {
+  background:linear-gradient(135deg,#ef4444,#f97316);
+  color:white; font-weight:900; font-size:9px;
+  border-radius:999px; padding:1px 6px;
+  box-shadow:0 2px 8px #ef444466;
+}
+
+/* ══ ANIMATIONS ═══════════════════════════════════════════════ */
+@keyframes animate-fade-in {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes float {
+  0%,100% { transform:translateY(0); }
+  50%      { transform:translateY(-6px); }
+}
+@keyframes shimmer {
+  0%   { background-position:-200% center; }
+  100% { background-position:200% center; }
+}
+@keyframes glow-pulse {
+  0%,100% { opacity:0.7; }
+  50%      { opacity:1; }
+}
+@keyframes navDash { to { stroke-dashoffset:-18; } }
+
+.animate-fade-in    { animation:animate-fade-in 0.4s ease-out both; }
+.animate-float      { animation:float 3s ease-in-out infinite; }
+.animate-shimmer    { background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent); background-size:200%; animation:shimmer 1.5s infinite; }
+.animate-glow-pulse { animation:glow-pulse 2s ease-in-out infinite; }
+
+/* ══ PRINT ════════════════════════════════════════════════════ */
 @media print {
-  body * { visibility: hidden; }
-  #printable-certificate, #printable-certificate * { visibility: visible; }
-  #printable-certificate { position: absolute; left: 0; top: 0; }
+  body * { visibility:hidden; }
+  #printable-certificate, #printable-certificate * { visibility:visible; }
+  #printable-certificate { position:absolute; left:0; top:0; }
 }
