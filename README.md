@@ -17,6 +17,18 @@
 
 ---
 
+
+---
+
+## 🗺️ 3D X-Ray Campus Map — Live Preview
+
+<div align="center">
+<img src="public/images/3d_xray_map.jpg" width="100%" alt="TAT Campus 3D X-Ray Map"/>
+</div>
+
+> **Real CSS 3D** — Buildings with transparent X-ray walls, glowing floor slabs, floating name badges, drag-to-orbit navigation
+
+---
 ## 🆕 New Features — v3.0 / v3.1
 
 ---
