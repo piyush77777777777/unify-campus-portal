@@ -20,13 +20,19 @@ const ROLE_META = {
 };
 
 const DEMO_ACCOUNTS = {
-  student:     { name: 'Piyush Kumar Dey',   email: 'piyush@tat.ac.in',     code: '2201106145' },
-  teacher:     { name: 'Prof. Ananya Verma', email: 'avinash@tat.ac.in',    code: 'FAC-001'    },
-  warden:      { name: 'Dr. S. K. Nayak',    email: 'warden@tat.ac.in',     code: 'WAR-01'     },
-  guard:       { name: 'Subedar Ram Singh',  email: 'guard@tat.ac.in',      code: 'SEC-01'     },
-  messManager: { name: 'Bikram Das',          email: 'mess@tat.ac.in',       code: 'MESS-01'    },
-  parent:      { name: 'Mr. Ramesh Dey',     email: 'parent@gmail.com',      code: '2201106145' },
-  principal:   { name: 'Prof. B. K. Mishra', email: 'principal@tat.ac.in',  code: 'PRIN-01'    }
+  // CIT new roles
+  admin:       { name: 'Dean R. K. Sharma',    email: 'admin@cit.ac.in',       code: 'ADMIN-01'   },
+  faculty:     { name: 'Dr. A. Panda',          email: 'faculty@cit.ac.in',     code: 'FAC-001'    },
+  coordinator: { name: 'Prof. S. Rath',         email: 'coord@cit.ac.in',       code: 'COORD-01'   },
+  club:        { name: 'Arjun Mehta (IEEE)',     email: 'club@cit.ac.in',        code: 'CLUB-01'    },
+  student:     { name: 'Piyush Kumar Dey',      email: 'student@cit.ac.in',     code: 'STU-001'    },
+  // Legacy roles kept for backward compatibility
+  teacher:     { name: 'Prof. Ananya Verma',    email: 'avinash@tat.ac.in',     code: 'FAC-001'    },
+  warden:      { name: 'Dr. S. K. Nayak',       email: 'warden@tat.ac.in',      code: 'WAR-01'     },
+  guard:       { name: 'Subedar Ram Singh',      email: 'guard@tat.ac.in',       code: 'SEC-01'     },
+  messManager: { name: 'Bikram Das',             email: 'mess@tat.ac.in',        code: 'MESS-01'    },
+  parent:      { name: 'Mr. Ramesh Dey',         email: 'parent@gmail.com',      code: '2201106145' },
+  principal:   { name: 'Prof. B. K. Mishra',    email: 'principal@tat.ac.in',   code: 'PRIN-01'    }
 };
 
 export default function GoogleAuthModal({ isOpen: propIsOpen, onClose: propOnClose, onLogin: propOnLogin, initialRole = null }) {

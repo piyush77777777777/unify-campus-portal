@@ -4,24 +4,22 @@ import GoogleAuthModal from '../auth/GoogleAuthModal';
 import { useCampus } from '../../context/CampusContext';
 
 const PORTALS = [
-  { id:'student',     emoji:'🎓', label:'Student',     desc:'Attendance, gate pass, fees, mess, hostel & more', gradient:'from-blue-500 to-indigo-600',    glow:'shadow-blue-500/30',   ring:'ring-blue-400' },
-  { id:'teacher',     emoji:'📚', label:'Teacher',     desc:'Classes, leave, grading, polls & workload',        gradient:'from-violet-500 to-purple-600',   glow:'shadow-violet-500/30', ring:'ring-violet-400' },
-  { id:'warden',      emoji:'🏠', label:'Warden',      desc:'Hostel gate passes, complaints & room records',    gradient:'from-emerald-500 to-teal-600',    glow:'shadow-emerald-500/30',ring:'ring-emerald-400' },
-  { id:'guard',       emoji:'🛡️', label:'Security',    desc:'QR scan, visitor logs & campus security audit',    gradient:'from-slate-600 to-slate-800',     glow:'shadow-slate-500/30',  ring:'ring-slate-400' },
-  { id:'messManager', emoji:'🍽️', label:'Mess',        desc:'Menu, feedback, reservations & nutrition',         gradient:'from-orange-500 to-amber-500',    glow:'shadow-orange-500/30', ring:'ring-orange-400' },
-  { id:'parent',      emoji:'👨‍👩‍👧', label:'Parent',     desc:'Ward attendance, fee status & gate pass history',  gradient:'from-teal-500 to-cyan-500',       glow:'shadow-teal-500/30',   ring:'ring-teal-400' },
-  { id:'principal',   emoji:'🎯', label:'Principal',   desc:'Campus analytics, staffing AI & policy compliance',gradient:'from-rose-500 to-pink-600',       glow:'shadow-rose-500/30',   ring:'ring-rose-400' },
+  { id:'admin',       emoji:'🏛',  label:'Admin (Dean)',       desc:'Generate timetable · Resolve conflicts · Approve changes · Export schedule.json', gradient:'from-slate-700 to-slate-900',     glow:'shadow-slate-500/30',   ring:'ring-slate-400' },
+  { id:'faculty',     emoji:'📚', label:'Faculty',             desc:'My timetable · Leave request · Extra class · AI scheduling copilot',               gradient:'from-teal-500 to-emerald-600',   glow:'shadow-teal-500/30',    ring:'ring-teal-400' },
+  { id:'coordinator', emoji:'🗂', label:'Dept. Coordinator',  desc:'Approve requests · Department timetable · Lab resource management',                gradient:'from-orange-500 to-amber-600',   glow:'shadow-orange-500/30',  ring:'ring-orange-400' },
+  { id:'club',        emoji:'🎉', label:'Club Representative', desc:'Spectra venue booking · Hall requests · Event management',                         gradient:'from-violet-500 to-purple-600',  glow:'shadow-violet-500/30',  ring:'ring-violet-400' },
+  { id:'student',     emoji:'🎓', label:'Student',             desc:'My timetable · Exam schedule · Campus map · Notice board',                         gradient:'from-blue-500 to-indigo-600',    glow:'shadow-blue-500/30',    ring:'ring-blue-400' },
 ];
 
 const FEATURES = [
-  { icon:'⚡', text:'Real-time QR Gate Pass' },
-  { icon:'📍', text:'Live GPS Bus Tracker' },
-  { icon:'🤖', text:'AI Complaint Routing' },
-  { icon:'🔔', text:'Smart Push Notifications' },
-  { icon:'📊', text:'Campus Analytics Dashboard' },
-  { icon:'🚨', text:'Emergency SOS System' },
-  { icon:'🗳️', text:'Live Polls & Quizzes' },
-  { icon:'🗺️', text:'Campus Hotspot Map' },
+  { icon:'⚡', text:'OR-Tools Clash-Free Scheduler' },
+  { icon:'🤖', text:'AI Copilot — English & Hinglish' },
+  { icon:'📊', text:'Spectra Venue Booking Engine' },
+  { icon:'🔄', text:'Smart Rescheduling & Recovery' },
+  { icon:'🏛', text:'Campus Command Center' },
+  { icon:'🔍', text:'Explainable AI Decisions' },
+  { icon:'📋', text:'4-Role Approval Workflow' },
+  { icon:'📄', text:'schedule.json Export (validator.py)' },
 ];
 
 // ── Unique animated UNIFY Logo ───────────────────────────────────

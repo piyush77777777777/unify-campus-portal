@@ -29,8 +29,8 @@ const CampusContext = createContext();
 export function CampusProvider({ children }) {
   const { isOffline, addToOfflineQueue, offlineQueue, clearQueue, showToast, networkMode } = useNetwork();
 
-  // Active user persona: 'student' | 'warden' | 'guard' | 'messManager' | 'teacher'
-  const VALID_ROLES = ['student','teacher','warden','guard','messManager','parent','principal'];
+  // Active user persona: 'student' | 'faculty' | 'admin' | 'coordinator' | 'club'
+  const VALID_ROLES = ['student','faculty','admin','coordinator','club','teacher','warden','guard','messManager','parent','principal'];
 
   const [activeRole, setActiveRole] = useState(() => {
     try {

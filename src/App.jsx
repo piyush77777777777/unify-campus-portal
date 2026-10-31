@@ -33,6 +33,10 @@ import DisciplinaryActions from './components/warden/DisciplinaryActions';
 import ClassAttendance from './components/teacher/ClassAttendance';
 import TeacherFeedback from './components/student/TeacherFeedback';
 import UnifyScheduler from './components/scheduler/UnifyScheduler';
+import CITAdminPortal from './components/admin/CITAdminPortal';
+import ClubPortal from './components/club/ClubPortal';
+import CoordinatorPortal from './components/coordinator/CoordinatorPortal';
+import CITFacultyPortal from './components/faculty/CITFacultyPortal';
 
 import GatePassModal from './components/student/GatePassModal';
 import ComplaintModal from './components/student/ComplaintModal';
@@ -41,7 +45,7 @@ import EmergencyAlertModal from './components/common/EmergencyAlertModal';
 import CampusBotModal from './components/common/CampusBotModal';
 
 // ─── Auto-clear stale localStorage on version change ───────────────────────
-const APP_VERSION = '2.7';
+const APP_VERSION = '3.0';
 try {
   const storedVersion = localStorage.getItem('UNIFY_version');
   if (storedVersion !== APP_VERSION) {
@@ -83,6 +87,11 @@ function MainApp() {
         if (activeRole === 'teacher') return <TeacherDashboard />;
         if (activeRole === 'parent') return <ParentPortal />;
         if (activeRole === 'principal') return <PrincipalPortal />;
+        // NEW CIT ROLES
+        if (activeRole === 'admin') return <CITAdminPortal />;
+        if (activeRole === 'faculty') return <CITFacultyPortal />;
+        if (activeRole === 'coordinator') return <CoordinatorPortal />;
+        if (activeRole === 'club') return <ClubPortal />;
         return <StudentDashboard onNavigateTab={setActiveTab} />;
 
       case 'gatePass':
@@ -152,6 +161,11 @@ function MainApp() {
       case 'classAttendance':  return <ClassAttendance />;
       case 'teacherFeedback':  return <TeacherFeedback />;
       case 'scheduler':        return <UnifyScheduler />;
+      // ── CIT NEW PORTALS ──
+      case 'citAdmin':         return <CITAdminPortal />;
+      case 'clubPortal':       return <ClubPortal />;
+      case 'coordinator':      return <CoordinatorPortal />;
+      case 'citFaculty':       return <CITFacultyPortal />;
       default:                 return <StudentDashboard onNavigateTab={setActiveTab} />;
     }
   };

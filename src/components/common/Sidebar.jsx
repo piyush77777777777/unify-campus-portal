@@ -5,7 +5,8 @@ import { useNetwork } from '../../context/NetworkContext';
 import {
   GraduationCap, LayoutDashboard, ShieldCheck, Wrench, FileText,
   Utensils, Bell, BarChart3, Smartphone, BookOpen,
-  Building2, Shield, Globe, X, Users, LogOut, Sparkles, Bus, Calendar, Cpu
+  Building2, Shield, Globe, X, Users, LogOut, Sparkles, Bus, Calendar, Cpu,
+  Star, RefreshCw, AlertTriangle, Layers
 } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobileOpen }) {
@@ -17,6 +18,42 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
 
   // ── Role-specific navigation items ──────────────────────
   const getNavSections = () => {
+    // ── NEW CIT ROLES ────────────────────────────────────────────
+    if (activeRole === 'admin') {
+      return [{ category: 'ADMIN — DEAN\'S OFFICE', items: [
+        { id: 'dashboard',   label: 'Command Center',      icon: LayoutDashboard },
+        { id: 'citAdmin',    label: '⚡ Timetable Generator', icon: Cpu },
+        { id: 'scheduler',   label: 'Scheduling Engine',   icon: Layers },
+        { id: 'notices',     label: 'Notices',             icon: Bell, badge: unreadCount },
+        { id: 'aiAnalytics', label: 'Analytics',           icon: BarChart3 },
+      ]}];
+    }
+    if (activeRole === 'faculty') {
+      return [{ category: 'FACULTY PORTAL — CIT', items: [
+        { id: 'dashboard',   label: 'My Timetable',        icon: BookOpen },
+        { id: 'citFaculty',  label: '🤖 AI Copilot',       icon: Sparkles },
+        { id: 'notices',     label: 'Notices',             icon: Bell, badge: unreadCount },
+        { id: 'calendar',    label: 'Exam Calendar',       icon: Calendar },
+        { id: 'campusNav',   label: 'Campus Map',          icon: Building2 },
+      ]}];
+    }
+    if (activeRole === 'coordinator') {
+      return [{ category: 'DEPT. COORDINATOR', items: [
+        { id: 'dashboard',   label: 'Approvals',           icon: ShieldCheck },
+        { id: 'coordinator', label: 'Dept Timetable',      icon: Calendar },
+        { id: 'notices',     label: 'Notices',             icon: Bell, badge: unreadCount },
+        { id: 'aiAnalytics', label: 'Analytics',           icon: BarChart3 },
+      ]}];
+    }
+    if (activeRole === 'club') {
+      return [{ category: 'CLUB & EVENTS', items: [
+        { id: 'dashboard',   label: '⭐ Spectra Booking',  icon: Star },
+        { id: 'clubPortal',  label: 'Hall Booking',        icon: Building2 },
+        { id: 'notices',     label: 'Notices',             icon: Bell, badge: unreadCount },
+        { id: 'campusNav',   label: 'Campus Map',          icon: Building2 },
+      ]}];
+    }
+    // ── EXISTING ROLES ───────────────────────────────────────────
     if (activeRole === 'student') {
       return [
         {
@@ -107,6 +144,10 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
   const roleLabel = {
     student: 'Student Portal',
     teacher: 'Faculty Portal',
+    faculty: 'Faculty — CIT',
+    admin: 'Admin — Dean\'s Office',
+    coordinator: 'Dept. Coordinator',
+    club: 'Club Representative',
     warden: 'Warden & Admin',
     guard: 'Security Officer',
     messManager: 'Mess Supervisor',
