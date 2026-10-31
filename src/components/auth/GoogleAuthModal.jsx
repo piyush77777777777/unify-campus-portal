@@ -1,284 +1,250 @@
 import React, { useState, useEffect } from 'react';
 import { useCampus } from '../../context/CampusContext';
-import { X, ShieldCheck, Mail, ArrowRight, AlertTriangle, Hash } from 'lucide-react';
+import { X, CheckCircle2, ArrowRight, Zap } from 'lucide-react';
 
-function safeStorage(key) {
-  try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; }
-}
-function saveStorage(key, val) {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
-}
+// ── Portal definitions ────────────────────────────────────────────────────────
+const PORTALS = [
+  {
+    id: 'admin',
+    emoji: '🏛',
+    label: 'Admin',
+    sublabel: 'Dean\'s Office',
+    desc: 'Generate timetable · Conflict resolution · Approve changes · Export',
+    color: 'from-slate-700 to-slate-900',
+    accent: '#475569',
+    name: 'Dean R. K. Sharma',
+  },
+  {
+    id: 'faculty',
+    emoji: '📚',
+    label: 'Faculty',
+    sublabel: 'Teaching Staff',
+    desc: 'My timetable · Leave request · Extra class · AI scheduling copilot',
+    color: 'from-teal-500 to-emerald-600',
+    accent: '#0d9488',
+    name: 'Dr. A. Panda',
+  },
+  {
+    id: 'coordinator',
+    emoji: '🗂',
+    label: 'Dept. Coordinator',
+    sublabel: 'CSE Department',
+    desc: 'Approve requests · Department timetable · Lab resource management',
+    color: 'from-orange-500 to-amber-600',
+    accent: '#f97316',
+    name: 'Prof. S. Rath',
+  },
+  {
+    id: 'club',
+    emoji: '🎉',
+    label: 'Club Representative',
+    sublabel: 'Student Clubs',
+    desc: 'Spectra venue booking · Hall requests · Event management',
+    color: 'from-violet-500 to-purple-600',
+    accent: '#8b5cf6',
+    name: 'Arjun Mehta (IEEE)',
+  },
+  {
+    id: 'student',
+    emoji: '🎓',
+    label: 'Student',
+    sublabel: 'CIT Campus',
+    desc: 'My timetable · Exam schedule · Campus map · Notice board',
+    color: 'from-blue-500 to-indigo-600',
+    accent: '#3b82f6',
+    name: 'Piyush Kumar Dey',
+  },
+];
 
-const ROLE_META = {
-  student:     { label: 'Student',           color: 'bg-blue-600',    emoji: '🎓', verifyLabel: 'Registration Number',  placeholder: '2201106145',     hint: 'Enter your university registration number' },
-  teacher:     { label: 'Faculty / Teacher', color: 'bg-purple-600',  emoji: '📚', verifyLabel: 'Employee ID',          placeholder: 'FAC-001',        hint: 'Enter your faculty employee ID' },
-  warden:      { label: 'Hostel Warden',     color: 'bg-indigo-600',  emoji: '🏠', verifyLabel: 'Warden ID',            placeholder: 'WAR-01',         hint: 'Enter your official warden ID' },
-  guard:       { label: 'Security Guard',    color: 'bg-amber-600',   emoji: '🛡', verifyLabel: 'Badge / Guard ID',     placeholder: 'SEC-01',         hint: 'Enter your security badge number' },
-  messManager: { label: 'Mess Supervisor',   color: 'bg-emerald-600', emoji: '🍽', verifyLabel: 'Mess Staff ID',        placeholder: 'MESS-01',        hint: 'Enter your mess staff ID' },
-  parent:      { label: 'Parent / Guardian', color: 'bg-teal-600',    emoji: '👨', verifyLabel: "Ward's Reg. Number",  placeholder: '2201106145',     hint: "Enter your ward's registration number" },
-  principal:   { label: 'Principal',         color: 'bg-rose-700',    emoji: '🎯', verifyLabel: 'Principal Office ID',  placeholder: 'PRIN-01',        hint: 'Enter your principal office ID' }
-};
-
-const DEMO_ACCOUNTS = {
-  // CIT new roles
-  admin:       { name: 'Dean R. K. Sharma',    email: 'admin@cit.ac.in',       code: 'ADMIN-01'   },
-  faculty:     { name: 'Dr. A. Panda',          email: 'faculty@cit.ac.in',     code: 'FAC-001'    },
-  coordinator: { name: 'Prof. S. Rath',         email: 'coord@cit.ac.in',       code: 'COORD-01'   },
-  club:        { name: 'Arjun Mehta (IEEE)',     email: 'club@cit.ac.in',        code: 'CLUB-01'    },
-  student:     { name: 'Piyush Kumar Dey',      email: 'student@cit.ac.in',     code: 'STU-001'    },
-  // Legacy roles kept for backward compatibility
-  teacher:     { name: 'Prof. Ananya Verma',    email: 'avinash@tat.ac.in',     code: 'FAC-001'    },
-  warden:      { name: 'Dr. S. K. Nayak',       email: 'warden@tat.ac.in',      code: 'WAR-01'     },
-  guard:       { name: 'Subedar Ram Singh',      email: 'guard@tat.ac.in',       code: 'SEC-01'     },
-  messManager: { name: 'Bikram Das',             email: 'mess@tat.ac.in',        code: 'MESS-01'    },
-  parent:      { name: 'Mr. Ramesh Dey',         email: 'parent@gmail.com',      code: '2201106145' },
-  principal:   { name: 'Prof. B. K. Mishra',    email: 'principal@tat.ac.in',   code: 'PRIN-01'    }
-};
-
-export default function GoogleAuthModal({ isOpen: propIsOpen, onClose: propOnClose, onLogin: propOnLogin, initialRole = null }) {
+export default function GoogleAuthModal({ isOpen: propIsOpen, onClose: propOnClose, onLogin: propOnLogin }) {
   const ctx = useCampus();
   const loginWithGoogle = ctx?.loginWithGoogle;
-  const authModalOpen   = ctx?.authModalOpen;
+  const authModalOpen = ctx?.authModalOpen;
   const setAuthModalOpen = ctx?.setAuthModalOpen;
 
-  // Support both prop-based and context-based open state
   const isOpen = propIsOpen !== undefined ? propIsOpen : (authModalOpen || false);
+
   const handleClose = () => {
     if (propOnClose) propOnClose();
     else if (setAuthModalOpen) setAuthModalOpen(false);
-    resetState();
+    setEntering(null);
   };
+
   const handleLogin = (role, acc) => {
     if (propOnLogin) propOnLogin(role, acc);
     else if (loginWithGoogle) loginWithGoogle(acc.email, role, acc.name);
     handleClose();
-  };;
-
-  const [step, setStep]   = useState('role');
-  const [role, setRole]   = useState(null);
-  const [account, setAccount] = useState(null);
-  const [code, setCode]   = useState('');
-  const [error, setError] = useState('');
-  const [customEmail, setCustomEmail] = useState('');
-  const [customName, setCustomName]   = useState('');
-  const [useCustom, setUseCustom]     = useState(false);
-  const [done, setDone]   = useState(false);
-
-  const resetState = () => {
-    setStep(initialRole ? 'account' : 'role');
-    setRole(initialRole || null);
-    setAccount(null); setCode(''); setError('');
-    setCustomEmail(''); setCustomName(''); setUseCustom(false); setDone(false);
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      setStep(initialRole ? 'account' : 'role');
-      setRole(initialRole || null);
-      setAccount(null); setCode(''); setError('');
-      setCustomEmail(''); setCustomName(''); setUseCustom(false); setDone(false);
-    }
-  }, [isOpen, initialRole]);
+  const [entering, setEntering] = useState(null); // portal being entered
+
+  const enter = (portal) => {
+    setEntering(portal.id);
+    setTimeout(() => {
+      handleLogin(portal.id, { role: portal.id, name: portal.name, email: `${portal.id}@cit.ac.in` });
+    }, 900);
+  };
 
   if (!isOpen) return null;
 
-  const meta = role ? ROLE_META[role] : null;
-  const demo = role ? DEMO_ACCOUNTS[role] : null;
-  const accentColor = meta?.color || 'bg-slate-700';
-
-  // ── STEP 1: choose role ──
-  const pickRole = (r) => { setRole(r); setError(''); setStep('account'); };
-
-  // ── STEP 2: choose account ──
-  const pickAccount = (acc) => {
-    setAccount(acc); setError(''); setStep('verify');
-  };
-  const submitCustom = (e) => {
-    e.preventDefault();
-    if (!customEmail.trim()) return;
-    const map = safeStorage('unify_email_role_map');
-    const existing = map[customEmail.toLowerCase()];
-    if (existing && existing !== role) {
-      setError('This email is already used for the ' + (ROLE_META[existing]?.label || existing) + ' portal.');
-      return;
-    }
-    setAccount({ name: customName || customEmail.split('@')[0], email: customEmail, code: null });
-    setError(''); setStep('verify');
-  };
-
-  // ── STEP 3: verify ──
-  const verify = (e) => {
-    e.preventDefault();
-    if (!code.trim()) { setError('Please enter your ' + (meta?.verifyLabel || 'ID') + '.'); return; }
-    if (demo && account?.email === demo.email && code.trim().toLowerCase() !== demo.code.toLowerCase()) {
-      setError('Wrong code. Hint: try "' + demo.code + '"');
-      return;
-    }
-    const map = safeStorage('unify_email_role_map');
-    map[(account?.email || '').toLowerCase()] = role;
-    saveStorage('unify_email_role_map', map);
-    setDone(true);
-    setTimeout(() => handleLogin(role, { role, name: account?.name || '', email: account?.email || '' }), 1000);
-  };
-
-  const steps = ['role','account','verify'];
-  const stepIdx = steps.indexOf(step);
+  const activePortal = PORTALS.find(p => p.id === entering);
 
   return (
-    <div style={{position:'fixed',inset:0,zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px',backgroundColor:'rgba(0,0,0,0.65)',backdropFilter:'blur(4px)'}}>
-      <div style={{background:'white',borderRadius:'24px',boxShadow:'0 25px 60px rgba(0,0,0,0.3)',width:'100%',maxWidth:'380px',overflow:'hidden'}}>
+    <div style={{
+      position:'fixed', inset:0, zIndex:9999,
+      display:'flex', alignItems:'center', justifyContent:'center',
+      padding:'16px', backgroundColor:'rgba(0,0,0,0.65)', backdropFilter:'blur(6px)'
+    }}>
+      <div style={{
+        background:'white', borderRadius:'28px',
+        boxShadow:'0 32px 80px rgba(0,0,0,0.35)',
+        width:'100%', maxWidth:'440px', overflow:'hidden',
+        maxHeight:'90vh', display:'flex', flexDirection:'column'
+      }}>
 
         {/* Header */}
-        <div className={`${accentColor} text-white px-6 py-5 relative`}>
-          <button onClick={handleClose} style={{position:'absolute',right:'16px',top:'16px',width:'28px',height:'28px',borderRadius:'50%',background:'rgba(255,255,255,0.2)',border:'none',color:'white',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <div style={{
+          background:'linear-gradient(135deg,#1e293b,#334155)',
+          color:'white', padding:'24px', position:'relative', flexShrink:0
+        }}>
+          <button onClick={handleClose} style={{
+            position:'absolute', right:'16px', top:'16px',
+            width:'28px', height:'28px', borderRadius:'50%',
+            background:'rgba(255,255,255,0.15)', border:'none',
+            color:'white', cursor:'pointer', display:'flex',
+            alignItems:'center', justifyContent:'center'
+          }}>
             <X size={14}/>
           </button>
-          <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
-            <div style={{width:'40px',height:'40px',borderRadius:'12px',background:'rgba(255,255,255,0.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'20px'}}>
-              {meta ? meta.emoji : '🔐'}
-            </div>
+
+          {/* Logo row */}
+          <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'4px' }}>
+            <div style={{
+              width:'44px', height:'44px', borderRadius:'14px',
+              background:'linear-gradient(135deg,#3b82f6,#8b5cf6)',
+              display:'flex', alignItems:'center', justifyContent:'center',
+              fontSize:'22px'
+            }}>🏫</div>
             <div>
-              <div style={{fontWeight:900,fontSize:'16px'}}>{meta ? meta.label + ' Portal' : 'UNIFY Login'}</div>
-              <div style={{fontSize:'11px',opacity:0.8,marginTop:'2px'}}>
-                {step==='role' ? 'Select your portal' : step==='account' ? 'Choose your account' : step==='verify' ? 'Verify your identity' : 'Logging in...'}
+              <div style={{ fontWeight:900, fontSize:'20px', letterSpacing:'-0.5px' }}>UNIFY</div>
+              <div style={{ fontSize:'11px', opacity:0.7, fontWeight:600 }}>
+                Chilika Institute of Technology · Campus Scheduling
               </div>
             </div>
           </div>
-          {/* Progress dots */}
-          <div style={{display:'flex',gap:'6px',marginTop:'16px'}}>
-            {(initialRole ? ['account','verify'] : steps).map((s,i) => (
-              <div key={s} style={{height:'3px',flex:1,borderRadius:'2px',background: step===s ? 'white' : stepIdx > (initialRole ? i+1 : i) ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.2)'}}/>
-            ))}
-          </div>
+          <p style={{ fontSize:'12px', opacity:0.6, marginTop:'10px', lineHeight:1.5 }}>
+            Select your role and enter instantly — no password required.
+          </p>
         </div>
 
-        {/* Error */}
-        {error ? (
-          <div style={{margin:'12px 20px 0',padding:'10px 12px',borderRadius:'12px',background:'#fff1f2',border:'1px solid #fecdd3',display:'flex',gap:'8px',alignItems:'flex-start'}}>
-            <AlertTriangle size={14} color="#e11d48" style={{flexShrink:0,marginTop:'2px'}}/>
-            <span style={{fontSize:'11px',color:'#be123c',fontWeight:500}}>{error}</span>
-          </div>
-        ) : null}
+        {/* Portal list */}
+        <div style={{ padding:'16px', overflowY:'auto', flex:1 }}>
 
-        <div style={{padding:'20px 24px 24px'}}>
+          {entering ? (
+            /* Entering animation */
+            <div style={{ textAlign:'center', padding:'40px 0' }}>
+              <div style={{
+                width:'64px', height:'64px', borderRadius:'50%',
+                background:'#d1fae5', display:'flex', alignItems:'center',
+                justifyContent:'center', margin:'0 auto 16px', fontSize:'28px'
+              }}>
+                {activePortal?.emoji}
+              </div>
+              <div style={{ fontWeight:900, fontSize:'18px', color:'#1e293b' }}>
+                Welcome, {activePortal?.name}!
+              </div>
+              <div style={{ fontSize:'12px', color:'#64748b', marginTop:'6px' }}>
+                Opening <strong>{activePortal?.label}</strong> portal…
+              </div>
+              <div style={{
+                width:'40px', height:'4px', borderRadius:'2px',
+                background:'#e2e8f0', margin:'20px auto 0', overflow:'hidden'
+              }}>
+                <div style={{
+                  height:'100%', background: activePortal?.accent || '#3b82f6',
+                  borderRadius:'2px', animation:'slideIn 0.9s ease forwards',
+                  width:'100%'
+                }}/>
+              </div>
+              <style>{`@keyframes slideIn { from { transform:translateX(-100%) } to { transform:translateX(0) } }`}</style>
+            </div>
+          ) : (
+            <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+              {PORTALS.map(portal => (
+                <button
+                  key={portal.id}
+                  onClick={() => enter(portal)}
+                  style={{
+                    display:'flex', alignItems:'center', gap:'14px',
+                    padding:'14px 16px', borderRadius:'18px',
+                    border:'1.5px solid #e2e8f0', background:'white',
+                    cursor:'pointer', textAlign:'left', width:'100%',
+                    transition:'all 0.15s ease'
+                  }}
+                  onMouseOver={e => {
+                    e.currentTarget.style.borderColor = portal.accent;
+                    e.currentTarget.style.background = `${portal.accent}0d`;
+                    e.currentTarget.style.transform = 'translateX(3px)';
+                  }}
+                  onMouseOut={e => {
+                    e.currentTarget.style.borderColor = '#e2e8f0';
+                    e.currentTarget.style.background = 'white';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                  }}
+                >
+                  {/* Icon */}
+                  <div style={{
+                    width:'46px', height:'46px', borderRadius:'14px', flexShrink:0,
+                    background:`linear-gradient(135deg,${portal.accent}22,${portal.accent}44)`,
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    fontSize:'22px'
+                  }}>
+                    {portal.emoji}
+                  </div>
 
-          {/* STEP: role */}
-          {step==='role' && (
-            <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
-              <p style={{fontSize:'12px',color:'#64748b',fontWeight:600,marginBottom:'4px'}}>Who are you? Select your portal:</p>
-              {Object.entries(ROLE_META).map(([r, rm]) => (
-                <button key={r} onClick={() => pickRole(r)}
-                  style={{display:'flex',alignItems:'center',gap:'12px',padding:'10px 12px',borderRadius:'14px',border:'1px solid #e2e8f0',background:'white',cursor:'pointer',textAlign:'left',width:'100%'}}
-                  onMouseOver={e=>{e.currentTarget.style.borderColor='#60a5fa';e.currentTarget.style.background='#eff6ff';}}
-                  onMouseOut={e=>{e.currentTarget.style.borderColor='#e2e8f0';e.currentTarget.style.background='white';}}>
-                  <div className={`${rm.color}`} style={{width:'36px',height:'36px',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px',color:'white',flexShrink:0}}>
-                    {rm.emoji}
+                  {/* Text */}
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+                      <span style={{ fontWeight:900, fontSize:'13px', color:'#1e293b' }}>
+                        {portal.label}
+                      </span>
+                      <span style={{
+                        fontSize:'10px', fontWeight:700, color: portal.accent,
+                        background:`${portal.accent}15`, padding:'1px 7px',
+                        borderRadius:'20px'
+                      }}>
+                        {portal.sublabel}
+                      </span>
+                    </div>
+                    <div style={{
+                      fontSize:'11px', color:'#64748b', marginTop:'2px',
+                      overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'
+                    }}>
+                      {portal.desc}
+                    </div>
                   </div>
-                  <div style={{flex:1}}>
-                    <div style={{fontSize:'12px',fontWeight:700,color:'#1e293b'}}>{rm.label}</div>
-                  </div>
-                  <ArrowRight size={14} color="#94a3b8"/>
+
+                  {/* Arrow */}
+                  <ArrowRight size={16} color={portal.accent} style={{ flexShrink:0, opacity:0.6 }}/>
                 </button>
               ))}
             </div>
           )}
-
-          {/* STEP: account */}
-          {step==='account' && meta && (
-            <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
-              {!initialRole && (
-                <button onClick={() => {setStep('role');setError('');}} style={{alignSelf:'flex-start',fontSize:'11px',color:'#2563eb',fontWeight:700,background:'none',border:'none',cursor:'pointer',padding:0}}>← Back</button>
-              )}
-              {!useCustom ? (
-                <>
-                  <p style={{fontSize:'11px',color:'#94a3b8',margin:0}}>Demo account for {meta.label}:</p>
-                  {demo && (
-                    <button onClick={() => pickAccount({name: demo.name, email: demo.email, expectedCode: demo.code})}
-                      style={{display:'flex',alignItems:'center',gap:'12px',padding:'12px',borderRadius:'14px',border:'1px solid #e2e8f0',background:'#f8fafc',cursor:'pointer',textAlign:'left',width:'100%'}}
-                      onMouseOver={e=>{e.currentTarget.style.borderColor='#60a5fa';}}
-                      onMouseOut={e=>{e.currentTarget.style.borderColor='#e2e8f0';}}>
-                      <div className={`${meta.color}`} style={{width:'36px',height:'36px',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px',color:'white',flexShrink:0}}>
-                        {meta.emoji}
-                      </div>
-                      <div style={{flex:1,minWidth:0}}>
-                        <div style={{fontSize:'12px',fontWeight:700,color:'#1e293b',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{demo.name}</div>
-                        <div style={{fontSize:'11px',color:'#64748b',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{demo.email}</div>
-                      </div>
-                      <ArrowRight size={14} color="#94a3b8"/>
-                    </button>
-                  )}
-                  <button onClick={() => setUseCustom(true)} style={{fontSize:'11px',color:'#2563eb',fontWeight:700,background:'none',border:'none',cursor:'pointer',textAlign:'center',padding:'4px 0'}}>
-                    + Use a different email
-                  </button>
-                </>
-              ) : (
-                <form onSubmit={submitCustom} style={{display:'flex',flexDirection:'column',gap:'10px'}}>
-                  <p style={{fontSize:'11px',color:'#64748b',margin:0}}>Enter your email for {meta.label} portal:</p>
-                  <div style={{position:'relative'}}>
-                    <Mail size={14} style={{position:'absolute',left:'10px',top:'50%',transform:'translateY(-50%)',color:'#94a3b8'}}/>
-                    <input type="email" required value={customEmail} onChange={e=>{setCustomEmail(e.target.value);setError('');}}
-                      placeholder="your@email.com"
-                      style={{width:'100%',paddingLeft:'32px',paddingRight:'10px',paddingTop:'8px',paddingBottom:'8px',fontSize:'12px',border:'1px solid #cbd5e1',borderRadius:'10px',outline:'none',boxSizing:'border-box'}}/>
-                  </div>
-                  <input type="text" value={customName} onChange={e=>setCustomName(e.target.value)} placeholder="Your full name"
-                    style={{width:'100%',padding:'8px 10px',fontSize:'12px',border:'1px solid #cbd5e1',borderRadius:'10px',outline:'none',boxSizing:'border-box'}}/>
-                  <div style={{display:'flex',gap:'8px'}}>
-                    <button type="button" onClick={() => setUseCustom(false)}
-                      style={{flex:1,padding:'8px',borderRadius:'10px',border:'1px solid #e2e8f0',fontSize:'12px',fontWeight:600,cursor:'pointer',background:'white'}}>Back</button>
-                    <button type="submit"
-                      style={{flex:1,padding:'8px',borderRadius:'10px',border:'none',fontSize:'12px',fontWeight:700,cursor:'pointer',background:'#2563eb',color:'white'}}>Continue →</button>
-                  </div>
-                </form>
-              )}
-            </div>
-          )}
-
-          {/* STEP: verify */}
-          {step==='verify' && meta && account && !done && (
-            <form onSubmit={verify} style={{display:'flex',flexDirection:'column',gap:'14px'}}>
-              <button type="button" onClick={() => {setStep('account');setError('');setCode('');}}
-                style={{alignSelf:'flex-start',fontSize:'11px',color:'#2563eb',fontWeight:700,background:'none',border:'none',cursor:'pointer',padding:0}}>← Back</button>
-              <div style={{background:'#f8fafc',border:'1px solid #e2e8f0',borderRadius:'16px',padding:'16px',textAlign:'center'}}>
-                <div style={{fontSize:'28px',marginBottom:'6px'}}>{meta.emoji}</div>
-                <div style={{fontWeight:900,fontSize:'14px',color:'#1e293b'}}>{meta.label} Verification</div>
-                <div style={{fontSize:'11px',color:'#64748b',marginTop:'4px'}}>{account.email}</div>
-              </div>
-              <div>
-                <label style={{display:'block',fontSize:'11px',fontWeight:700,color:'#374151',marginBottom:'6px',textTransform:'uppercase',letterSpacing:'0.05em'}}>{meta.verifyLabel} *</label>
-                <div style={{position:'relative'}}>
-                  <Hash size={14} style={{position:'absolute',left:'10px',top:'50%',transform:'translateY(-50%)',color:'#94a3b8'}}/>
-                  <input type="text" required value={code} onChange={e=>{setCode(e.target.value);setError('');}}
-                    placeholder={meta.placeholder}
-                    style={{width:'100%',paddingLeft:'32px',paddingRight:'10px',paddingTop:'10px',paddingBottom:'10px',fontSize:'12px',border:'1px solid #cbd5e1',borderRadius:'10px',outline:'none',fontFamily:'monospace',boxSizing:'border-box'}}/>
-                </div>
-                <p style={{fontSize:'10px',color:'#94a3b8',marginTop:'4px'}}>{meta.hint}</p>
-              </div>
-              <button type="submit"
-                className={`${meta.color}`}
-                style={{width:'100%',padding:'12px',borderRadius:'12px',border:'none',color:'white',fontSize:'12px',fontWeight:900,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:'8px'}}>
-                <ShieldCheck size={16}/> Verify &amp; Enter {meta.label} Portal
-              </button>
-            </form>
-          )}
-
-          {/* SUCCESS */}
-          {done && (
-            <div style={{textAlign:'center',padding:'24px 0'}}>
-              <div style={{width:'56px',height:'56px',borderRadius:'50%',background:'#d1fae5',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 12px'}}>
-                <ShieldCheck size={28} color="#059669"/>
-              </div>
-              <div style={{fontWeight:900,color:'#1e293b',fontSize:'16px'}}>Verified!</div>
-              <div style={{fontSize:'12px',color:'#64748b',marginTop:'4px'}}>Opening {meta?.label} Portal...</div>
-            </div>
-          )}
-
         </div>
 
         {/* Footer */}
-        <div style={{padding:'12px 24px',borderTop:'1px solid #f1f5f9',display:'flex',justifyContent:'space-between',fontSize:'10px',color:'#94a3b8'}}>
-          <span style={{display:'flex',alignItems:'center',gap:'4px'}}><ShieldCheck size={10} color="#10b981"/> Secured Login</span>
-          <span>1 Email = 1 Portal Only</span>
-        </div>
+        {!entering && (
+          <div style={{
+            padding:'12px 20px', borderTop:'1px solid #f1f5f9',
+            display:'flex', justifyContent:'space-between',
+            fontSize:'10px', color:'#94a3b8', flexShrink:0
+          }}>
+            <span style={{ display:'flex', alignItems:'center', gap:'4px' }}>
+              <Zap size={10} color="#10b981"/> One-click access · No password needed
+            </span>
+            <span>CIT v3.0</span>
+          </div>
+        )}
       </div>
     </div>
   );
