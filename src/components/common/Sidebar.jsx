@@ -5,7 +5,7 @@ import { useNetwork } from '../../context/NetworkContext';
 import {
   GraduationCap, LayoutDashboard, ShieldCheck, Wrench, FileText,
   Utensils, Bell, BarChart3, Smartphone, BookOpen,
-  Building2, Shield, Globe, X, Users, LogOut, Sparkles, Bus, Calendar
+  Building2, Shield, Globe, X, Users, LogOut, Sparkles, Bus, Calendar, Cpu
 } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobileOpen }) {
@@ -38,6 +38,7 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
             { id: 'calendar',   label: 'Exam Calendar',    icon: Calendar },
             { id: 'busTracker', label: 'Live Bus Tracker', icon: Bus },
             { id: 'notices',    label: 'Notice Board',     icon: Bell, badge: unreadCount },
+            { id: 'scheduler',  label: '⚡ Smart Scheduler',icon: Cpu },
           ]
         }
       ];
@@ -49,6 +50,7 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
         { id: 'notices',        label: 'Notices',            icon: Bell, badge: unreadCount },
         { id: 'calendar',       label: 'Academic Calendar',  icon: Calendar },
         { id: 'aiAnalytics',    label: 'AI Analytics',       icon: Sparkles },
+        { id: 'scheduler',      label: '⚡ Smart Scheduler',  icon: Cpu },
       ]}];
     }
     if (activeRole === 'warden') {
@@ -59,6 +61,7 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
         { id: 'complaints',     label: 'Complaints',          icon: Wrench },
         { id: 'notices',        label: 'Notices',             icon: Bell, badge: unreadCount },
         { id: 'aiAnalytics',    label: 'AI Analytics',        icon: Sparkles },
+        { id: 'scheduler',      label: '⚡ Smart Scheduler',   icon: Cpu },
       ]}];
     }
     if (activeRole === 'guard') {
@@ -89,12 +92,14 @@ export default function Sidebar({ activeTab, setActiveTab, mobileOpen, setMobile
         { id: 'notices',     label: 'Notices',           icon: Bell, badge: unreadCount },
         { id: 'aiAnalytics', label: 'AI Intelligence',   icon: Sparkles },
         { id: 'calendar',    label: 'Academic Calendar', icon: Calendar },
+        { id: 'scheduler',   label: '⚡ Smart Scheduler', icon: Cpu },
       ]}];
     }
     // default / admin
     return [{ category: 'ADMIN', items: [
-      { id: 'admin',   label: 'Admin Dashboard', icon: LayoutDashboard },
-      { id: 'notices', label: 'Notices',         icon: Bell, badge: unreadCount },
+      { id: 'admin',     label: 'Admin Dashboard',  icon: LayoutDashboard },
+      { id: 'scheduler', label: '⚡ Smart Scheduler',icon: Cpu },
+      { id: 'notices',   label: 'Notices',          icon: Bell, badge: unreadCount },
     ]}];
   };
 

@@ -32,6 +32,7 @@ import SmartTimetable from './components/student/SmartTimetable';
 import DisciplinaryActions from './components/warden/DisciplinaryActions';
 import ClassAttendance from './components/teacher/ClassAttendance';
 import TeacherFeedback from './components/student/TeacherFeedback';
+import UnifyScheduler from './components/scheduler/UnifyScheduler';
 
 import GatePassModal from './components/student/GatePassModal';
 import ComplaintModal from './components/student/ComplaintModal';
@@ -150,6 +151,7 @@ function MainApp() {
       case 'disciplinary':     return <DisciplinaryActions />;
       case 'classAttendance':  return <ClassAttendance />;
       case 'teacherFeedback':  return <TeacherFeedback />;
+      case 'scheduler':        return <UnifyScheduler />;
       default:                 return <StudentDashboard onNavigateTab={setActiveTab} />;
     }
   };
